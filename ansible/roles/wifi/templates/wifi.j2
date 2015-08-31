@@ -1,0 +1,22 @@
+[connection]
+id={{ item.ssid }}
+uuid={{ item.ssid | to_uuid() }}
+type=802-11-wireless
+timestamp=0
+autoconnect=true
+
+[802-11-wireless]
+ssid={{ item.ssid }}
+mode=infrastructure
+security=802-11-wireless-security
+
+[802-11-wireless-security]
+key-mgmt={{ item.type }}
+{% if "wpa" in item.type %}
+psk={{ item.pass }}
+{% else %}
+wep-key0={{ item.pass }}
+{% endif %}
+
+[ipv4]
+method=auto

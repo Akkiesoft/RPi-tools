@@ -1,0 +1,3 @@
+- name: restart network-manager
+  action: service name=network-manager state=restarted
+  sudo: yes

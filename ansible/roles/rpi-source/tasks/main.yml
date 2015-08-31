@@ -1,0 +1,59 @@
+---
+# Raspbianにドライバーコンパイル環境を作るPlaybook
+# ベースにした→ http://qnighy.hatenablog.com/entry/2015/02/05/155016
+
+# Require roles: common_jessie
+
+- name: install gcc-4.8/jessie
+  apt: >
+    default_release=jessie
+    name={{ item }}
+    state=present
+    update_cache=yes
+    cache_valid_time=3600
+  with_items:
+    - gcc-4.8
+    - gcc-4.8-base
+    - cpp-4.8
+    - binutils
+    - libgcc-4.8-dev
+    - libgcc1
+    - libmpfr4
+    - libatomic1
+    - libasan0
+    - libstdc++6
+    - libgomp1
+    - libc6
+    - libc6-dev
+  sudo: yes
+  
+- name: install other packeages
+  apt: >
+    name=libncurses5-dev
+    state=present
+  sudo: yes
+
+- name: mark as auto-installed packages
+  command: apt-mark auto libmpfr4 cpp-4.8 libgcc-4.8-dev libgcc1 libc6-dev libc-dev-bin libc6
+  sudo: yes
+
+- name: set alternatives
+  alternatives: >
+    name=gcc
+    path=/usr/bin/gcc-4.8
+    link=/usr/bin/gcc
+  sudo: yes
+
+- name: download rpi-source
+  get_url: >
+    url=https://raw.githubusercontent.com/notro/rpi-source/master/rpi-source
+    dest=/usr/bin/rpi-source
+    mode=0755
+  sudo: yes
+
+- name: rpi-source tag update
+  command: /usr/bin/rpi-source -q --tag-update
+  sudo: yes
+
+- name: run rpi-source
+  command: rpi-source

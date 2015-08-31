@@ -1,0 +1,9 @@
+---
+# Raspbianにドライバーコンパイル環境を作るPlaybook
+# ベースにした→ http://qnighy.hatenablog.com/entry/2015/02/05/155016
+
+hosts: raspi
+
+roles:
+  - jessie
+  - rpi-source

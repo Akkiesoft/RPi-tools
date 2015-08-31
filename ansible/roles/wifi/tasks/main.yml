@@ -1,0 +1,24 @@
+- name: install NetworkManager
+  apt: >
+    name=network-manager
+    state=present
+    update_cache=yes
+    cache_valid_time=3600
+
+- name: uninstall oldtype network management tool
+  apt: >
+    name={{ item }}
+    state=absent
+  with_items:
+    - dhcpcd5
+    - ifplugd
+
+- name: copy wi-fi configuration
+  template: >
+    src=wifi.j2
+    dest=/etc/NetworkManager/system-connections/{{ item.ssid }}
+    mode=0600
+    owner=root
+    group=root
+  with_items: wifi
+  notify: restart network-manager
