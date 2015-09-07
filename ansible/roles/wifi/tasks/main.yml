@@ -4,6 +4,7 @@
     state=present
     update_cache=yes
     cache_valid_time=3600
+  sudo: yes
 
 - name: uninstall oldtype network management tool
   apt: >
@@ -12,6 +13,7 @@
   with_items:
     - dhcpcd5
     - ifplugd
+  sudo: yes
 
 - name: copy wi-fi configuration
   template: >
@@ -22,3 +24,4 @@
     group=root
   with_items: wifi
   notify: restart network-manager
+  sudo: yes

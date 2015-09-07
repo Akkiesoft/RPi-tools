@@ -1,5 +1,7 @@
 ---
-ds18b20_id: 28-000001234567
 
-tw_consumer_key: bI6cwgYJgwQibk0xJUSSsaUON
-tw_consumer_secret: vVHD75rmkJh3Bpe8BfLQgN1xePVs0E6crdCLIshn3kYPfqe1Kc
+# for Wi-Fi role
+wifi:
+  - type: wpa-psk
+    ssid: mywifi
+    pass: mywifipass

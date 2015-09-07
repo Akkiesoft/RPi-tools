@@ -1,0 +1,20 @@
+- name: install ruby modules
+  apt: >
+    default_release=jessie
+    name={{ item }}
+    state=present
+    update_cache=yes
+    cache_valid_time=3600
+  with_items:
+    - ruby-addressable
+    - ruby-memoize
+    - ruby-hmac
+    - ruby-oauth
+    - ruby-gnome2
+    - ruby-glib2
+    - ruby-gtk2
+    - ruby-nokogiri
+    - ruby-typed-array
+  sudo: yes
+
+# 後はがんばれ

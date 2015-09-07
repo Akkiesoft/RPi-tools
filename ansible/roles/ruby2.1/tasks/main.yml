@@ -1,0 +1,25 @@
+- name: install ruby2.1
+  apt: >
+    default_release=jessie
+    name=ruby2.1
+    state=present
+    update_cache=yes
+    cache_valid_time=3600
+  sudo: yes
+
+- name: set alternatives for ruby
+  alternatives: >
+    name={{ item.name }}
+    path={{ item.path }}
+  with_items:
+    - name: ruby
+      path: /usr/bin/ruby2.1
+    - name: gem
+      path: /usr/bin/gem2.1
+  sudo: yes
+
+- name: install bundler
+  gem: >
+    name=bundler
+    state=present
+  sudo: yes
