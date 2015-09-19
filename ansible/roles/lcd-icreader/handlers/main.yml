@@ -1,0 +1,7 @@
+- name: reload udev
+  command: udevadm control --reload-rules
+  sudo: yes
+
+- name: reboot
+  command: reboot
+  sudo: yes
