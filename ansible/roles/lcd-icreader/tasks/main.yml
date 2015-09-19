@@ -1,0 +1,113 @@
+- name: install packages
+  apt: >
+    name={{ item }}
+    state=present
+    update_cache=yes
+    cache_valid_time=3600
+  with_items:
+    - i2c-tools
+    - gcc
+    - libusb-1.0-0-dev
+    - ruby-dev
+    - wiringpi
+  sudo: yes
+
+- name: install wiringpi module
+  gem: >
+    name=wiringpi
+    state=present
+  sudo: yes
+
+- name: enable i2c
+  lineinfile: >
+    dest=/boot/config.txt
+    line="dtparam=i2c_arm=on"
+  notify: reboot
+  sudo: yes
+
+- name: enable i2c
+  lineinfile: >
+    dest=/etc/modules
+    line={{ item }}
+  with_items:
+    - i2c-bcm2708 
+    - i2c-dev
+  notify: reboot
+  sudo: yes
+
+
+- name: download libpafe
+  get_url: >
+    url=http://homepage3.nifty.com/slokar/pasori/libpafe-0.0.8.tar.gz
+    dest=/home/pi/
+
+- name: unarchive libpafe
+  unarchive: >
+    src=/home/pi/libpafe-0.0.8.tar.gz
+    dest=/home/pi
+    copy=no
+
+- name: check exist libpafe library
+  stat: path=/usr/local/lib/libpafe.so.0.0.8
+  register: libpafe_so
+
+- name: configure libpafe
+  command: ./configure chdir=/home/pi/libpafe-0.0.8
+  when: not libpafe_so.stat.exists
+
+- name: make libpafe
+  command: make chdir=/home/pi/libpafe-0.0.8
+  when: not libpafe_so.stat.exists
+
+- name: install libpafe
+  command: make install chdir=/home/pi/libpafe-0.0.8
+  when: not libpafe_so.stat.exists
+  sudo: yes
+
+- name: copy udev rule for libpafe
+  copy:
+    src=60-libpafe.rules
+    dest=/etc/udev/rules.d
+  notify: reload udev
+  sudo: yes
+
+- name: download libpafe-ruby
+  get_url: >
+    url=http://homepage3.nifty.com/slokar/pasori/libpafe-ruby-0.0.8.tar.gz
+    dest=/home/pi/
+
+- name: unarchive libpafe-ruby
+  unarchive: >
+    src=/home/pi/libpafe-ruby-0.0.8.tar.gz
+    dest=/home/pi
+    copy=no
+
+- name: check exist libpafe-ruby module
+  stat: path=/usr/local/lib/site_ruby/1.9.1/arm-linux-eabihf/pasori.so
+  register: pasori_so
+
+- name: ruby extconf.rb
+  command: ruby extconf.rb chdir=/home/pi/libpafe-ruby
+  when: not pasori_so.stat.exists
+
+- name: make libpafe-ruby
+  command: make chdir=/home/pi/libpafe-ruby
+  when: not pasori_so.stat.exists
+
+- name: install libpafe-ruby
+  command: make install chdir=/home/pi/libpafe-ruby
+  when: not pasori_so.stat.exists
+  sudo: yes
+
+# https://gist.github.com/Akkiesoft/6971348
+- name: download lcd.rb
+  get_url: >
+    url=https://gist.githubusercontent.com/Akkiesoft/6971348/raw/8f6bdd62d0b0f9c5d60bf19cfb76aedb2c0b21c7/lcd.rb
+    dest=/home/pi/
+
+- name: set autostart lcd.rb
+  lineinfile: >
+    dest=/etc/rc.local
+    insertbefore="exit 0"
+    line="/usr/bin/ruby /home/pi/lcd.rb &"
+  sudo: yes
