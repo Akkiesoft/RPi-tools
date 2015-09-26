@@ -103,7 +103,7 @@
 # https://gist.github.com/Akkiesoft/6971348
 - name: download lcd.rb
   get_url: >
-    url=https://gist.githubusercontent.com/Akkiesoft/6971348/raw/ef6bb764e62991253c44c133d8024dbf858c13f5/lcd.rb
+    url=https://gist.githubusercontent.com/Akkiesoft/6971348/raw/de0f98bf7d469eb71db4a466c6bcdf396a2a335a/lcd.rb
     dest=/home/pi/
 
 - name: set autostart lcd.rb
