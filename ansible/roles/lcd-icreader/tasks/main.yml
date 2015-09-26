@@ -8,6 +8,7 @@
     - i2c-tools
     - gcc
     - libusb-1.0-0-dev
+    - ruby1.9.3
     - ruby-dev
     - wiringpi
   sudo: yes
@@ -102,7 +103,7 @@
 # https://gist.github.com/Akkiesoft/6971348
 - name: download lcd.rb
   get_url: >
-    url=https://gist.githubusercontent.com/Akkiesoft/6971348/raw/8f6bdd62d0b0f9c5d60bf19cfb76aedb2c0b21c7/lcd.rb
+    url=https://gist.githubusercontent.com/Akkiesoft/6971348/raw/ef6bb764e62991253c44c133d8024dbf858c13f5/lcd.rb
     dest=/home/pi/
 
 - name: set autostart lcd.rb
