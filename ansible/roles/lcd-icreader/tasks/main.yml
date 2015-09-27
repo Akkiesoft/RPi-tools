@@ -110,5 +110,5 @@
   lineinfile: >
     dest=/etc/rc.local
     insertbefore="exit 0"
-    line="/usr/bin/ruby /home/pi/lcd.rb &"
+    line="sudo /usr/bin/ruby /home/pi/lcd.rb &"
   sudo: yes
