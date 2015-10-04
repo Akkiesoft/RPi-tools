@@ -1,10 +1,15 @@
+# Require roles: jessie
+
 - name: install ruby2.1
   apt: >
     default_release=jessie
-    name=ruby2.1
+    name={{ item }}
     state=present
     update_cache=yes
     cache_valid_time=3600
+  with_items:
+    - ruby2.1
+    - ruby2.1-dev
   sudo: yes
 
 - name: set alternatives for ruby

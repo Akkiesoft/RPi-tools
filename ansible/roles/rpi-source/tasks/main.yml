@@ -4,7 +4,7 @@
 
 # Require roles: common_jessie
 
-- name: install gcc-4.8/jessie
+- name: install gcc-4.8(for wheezy)
   apt: >
     default_release=jessie
     name={{ item }}
@@ -15,6 +15,7 @@
     - gcc-4.8
     - gcc-4.8-base
     - cpp-4.8
+    - g++-4.8
     - binutils
     - libgcc-4.8-dev
     - libgcc1
@@ -25,6 +26,21 @@
     - libgomp1
     - libc6
     - libc6-dev
+  when: ansible_distribution_release == "wheezy"
+  sudo: yes
+
+- name: install gcc-4.8(for jessie)
+  apt: >
+    name={{ item }}
+    state=present
+    update_cache=yes
+    cache_valid_time=3600
+  with_items:
+    - gcc-4.8
+    - gcc-4.8-base
+    - cpp-4.8
+    - g++-4.8
+  when: ansible_distribution_release == "jessie"
   sudo: yes
   
 - name: install other packeages
@@ -33,8 +49,9 @@
     state=present
   sudo: yes
 
-- name: mark as auto-installed packages
+- name: mark as auto-installed packages(for wheezy)
   command: apt-mark auto libmpfr4 cpp-4.8 libgcc-4.8-dev libgcc1 libc6-dev libc-dev-bin libc6
+  when: ansible_distribution_release == "wheezy"
   sudo: yes
 
 - name: set alternatives
