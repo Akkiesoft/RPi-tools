@@ -9,7 +9,7 @@ Raspberry Piの各種環境構築に役立つかもしれないPlaybookをまと
 ### Role 一覧
 
 | role名 | 内容 | 依存するRole | varsの有無 |
-| --- | --- |
+| --- | --- | --- | --- |
 | jessie | Wheezy環境にJessieのリポジトリを追加する | なし |
 | lcd-icreader | SB1602系などのI2C通信のLCDモジュールを使ってRC-S320でICカードの残高を表示する環境を構築する | なし |
 | mikutter | mikutterをインストールする | jessie, ruby2.1 | なし |
