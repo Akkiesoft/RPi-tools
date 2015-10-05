@@ -1,20 +1,45 @@
-- name: install ruby modules
-  apt: >
-    default_release=jessie
-    name={{ item }}
-    state=present
-    update_cache=yes
-    cache_valid_time=3600
-  with_items:
-    - ruby-addressable
-    - ruby-memoize
-    - ruby-hmac
-    - ruby-oauth
-    - ruby-gnome2
-    - ruby-glib2
-    - ruby-gtk2
-    - ruby-nokogiri
-    - ruby-typed-array
-  sudo: yes
+# Require roles: jessie, ruby2.1
 
-# 後はがんばれ
+- name: copy mikutter version check script
+  copy: >
+    src=chk-mikutter-ver.py
+    dest=/tmp/chk-mikutter-ver.py
+  always_run: yes
+
+- name: check latest version of mikutter
+  command: /usr/bin/python /tmp/chk-mikutter-ver.py
+  register: latest_ver
+  changed_when: no
+  always_run: yes
+# TODO: Error Handling
+
+- set_fact:
+    mikutter_ver: "{{ latest_ver.stdout }}"
+    mikutter_tarball: "{{ ansible_env.HOME }}/mikutter.{{ latest_ver.stdout }}.tar.gz"
+
+- name: get latest mikutter
+  get_url: >
+    url=http://mikutter.hachune.net/bin/mikutter.{{ mikutter_ver }}.tar.gz
+    dest={{ mikutter_tarball }}
+
+- name: check exist mikutter directory
+  stat: >
+    path={{ ansible_env.HOME }}/mikutter
+  register: mikutter_check
+# TODO: すでにあったらバックアップするとか、バージョンを取得してアップデートの可否を確認する。
+
+- name: unarchive tarball
+  unarchive: >
+    copy=no
+    src={{ mikutter_tarball }}
+    dest={{ ansible_env.HOME }}
+
+- name: run bundler (at first time, this may take a lot of minutes.)
+  command: bundle chdir={{ ansible_env.HOME }}/mikutter
+
+- name: generate desktop menu
+  template: >
+    src=mikutter.desktop.j2
+    dest=/usr/share/applications/mikutter.desktop
+    mode=0755
+  sudo: yes

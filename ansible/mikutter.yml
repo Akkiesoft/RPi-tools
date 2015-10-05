@@ -1,7 +1,6 @@
 ---
-- hosts: rpi9
+- hosts: all
   roles:
   - jessie
-  - wifi
   - ruby2.1
   - mikutter

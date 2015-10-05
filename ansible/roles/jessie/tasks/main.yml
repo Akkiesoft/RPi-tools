@@ -2,6 +2,7 @@
   apt_repository: >
     repo='deb http://mirrordirector.raspbian.org/raspbian/ jessie main contrib non-free rpi'
     state=present
+  when: ansible_distribution_release == "wheezy"
   sudo: yes
 
 - name: copy /etc/apt/preferences
@@ -11,4 +12,5 @@
     owner=root
     group=root
     mode=0644
+  when: ansible_distribution_release == "wheezy"
   sudo: yes
