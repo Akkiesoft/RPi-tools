@@ -11,7 +11,9 @@
   register: latest_ver
   changed_when: no
   always_run: yes
-# TODO: Error Handling
+
+- fail: msg="Failed to get mikutter version. Check the internet connectivity of target machine or try again later."
+  when: latest_ver.rc
 
 - set_fact:
     mikutter_ver: "{{ latest_ver.stdout }}"
@@ -21,21 +23,34 @@
   get_url: >
     url=http://mikutter.hachune.net/bin/mikutter.{{ mikutter_ver }}.tar.gz
     dest={{ mikutter_tarball }}
+  register: dl_mikutter
 
 - name: check exist mikutter directory
   stat: >
     path={{ ansible_env.HOME }}/mikutter
   register: mikutter_check
-# TODO: すでにあったらバックアップするとか、バージョンを取得してアップデートの可否を確認する。
+
+- name: backup exist mikutter
+  command: mv {{ ansible_env.HOME }}/mikutter {{ ansible_env.HOME }}/mikutter_{{ansible_date_time.iso8601}}
+  when:
+    - mikutter_check.stat.exists
+    - dl_mikutter | changed
+# TODO: 既存のmikutterのバージョンチェック方法はそのうち改善したい
 
 - name: unarchive tarball
   unarchive: >
     copy=no
     src={{ mikutter_tarball }}
     dest={{ ansible_env.HOME }}
+  when:
+    - mikutter_check.stat.exists
+    - dl_mikutter | changed
 
 - name: run bundler (at first time, this may take a lot of minutes.)
   command: bundle chdir={{ ansible_env.HOME }}/mikutter
+  when:
+    - mikutter_check.stat.exists
+    - dl_mikutter | changed
 
 - name: generate desktop menu
   template: >

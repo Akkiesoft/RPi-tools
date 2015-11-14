@@ -10,6 +10,7 @@
   with_items:
     - ruby2.1
     - ruby2.1-dev
+    - bundler
   sudo: yes
 
 - name: set alternatives for ruby
