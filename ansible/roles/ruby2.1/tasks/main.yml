@@ -10,6 +10,7 @@
   with_items:
     - ruby2.1
     - ruby2.1-dev
+    - bundler
   sudo: yes
 
 - name: set alternatives for ruby
@@ -24,10 +25,4 @@
     - name: gem
       path: /usr/bin/gem2.1
       link: /usr/bin/gem
-  sudo: yes
-
-- name: install bundler
-  gem: >
-    name=bundler
-    state=present
   sudo: yes
