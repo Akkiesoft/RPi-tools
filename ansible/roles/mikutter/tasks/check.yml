@@ -1,0 +1,41 @@
+# Check
+
+- name: copy mikutter version check script
+  copy: >
+    src=chk-mikutter-ver.py
+    dest=/tmp/chk-mikutter-ver.py
+  always_run: yes
+
+- name: check latest version of mikutter
+  command: /usr/bin/python /tmp/chk-mikutter-ver.py
+  register: latest_ver
+  changed_when: no
+  failed_when: latest_ver.rc
+  always_run: yes
+
+- set_fact:
+    mikutter_ver: "{{ latest_ver.stdout }}"
+    mikutter_tarball: "{{ mikutter_path }}.{{ latest_ver.stdout }}.tar.gz"
+
+- name: check exist mikutter directory
+  stat: path={{ mikutter_path }}
+  register: mikutter_check
+
+- name: check exist mikutter version
+  command: ruby {{ mikutter_path }}/mikutter.rb --version
+  register: exist_mikutter_result
+  when: mikutter_check.stat.exists
+  changed_when: no
+  failed_when: no
+  always_run: yes
+
+# 存在しているmikutterのバージョンを上書格納
+- set_fact:
+    exist_mikutter_ver: "{{ exist_mikutter_result.stdout.split(' ') }}"
+  when:
+    - mikutter_check.stat.exists
+    - not exist_mikutter_result.rc
+
+- name: compare version
+  set_fact:
+    install_flag: "{{ exist_mikutter_ver[1] | version_compare(mikutter_ver, '<') }}"

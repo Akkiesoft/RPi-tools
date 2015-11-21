@@ -1,0 +1,30 @@
+# Install
+
+- name: get latest mikutter
+  get_url: >
+    url=http://mikutter.hachune.net/bin/mikutter.{{ mikutter_ver }}.tar.gz
+    dest={{ mikutter_tarball }}
+  when: install_flag
+
+- name: backup exist mikutter
+  command: mv {{ mikutter_path }} {{ mikutter_path }}_{{ ansible_date_time.iso8601 }}
+  when:
+    - install_flag
+    - mikutter_check.stat.exists
+
+- name: unarchive tarball
+  unarchive: >
+    copy=no
+    src={{ mikutter_tarball }}
+    dest={{ install_path }}
+  when: install_flag
+
+- name: run bundler (at first time, this may take a lot of minutes.)
+  command: bundle chdir={{ mikutter_path }}
+
+- name: generate desktop menu
+  template: >
+    src=mikutter.desktop.j2
+    dest=/usr/share/applications/mikutter.desktop
+    mode=0755
+  sudo: yes
