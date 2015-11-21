@@ -1,21 +1,18 @@
 # Check
 
-- name: copy mikutter version check script
-  copy: >
-    src=chk-mikutter-ver.py
-    dest=/tmp/chk-mikutter-ver.py
+- name: check latest version of mikutter
+  uri: url="http://mikutter.hachune.net/download/unstable.json?count=1"
+  register: mikutter_json
   always_run: yes
 
-- name: check latest version of mikutter
-  command: /usr/bin/python /tmp/chk-mikutter-ver.py
-  register: latest_ver
-  changed_when: no
-  failed_when: latest_ver.rc
-  always_run: yes
+- fail: msg="can't get latest mikutter version!"
+  when: mikutter_json.json[0].version_string is not defined
 
 - set_fact:
-    mikutter_ver: "{{ latest_ver.stdout }}"
-    mikutter_tarball: "{{ mikutter_path }}.{{ latest_ver.stdout }}.tar.gz"
+    mikutter_ver: "{{mikutter_json.json[0].version_string}}"
+
+- set_fact:
+    mikutter_tarball: "{{ mikutter_path }}.{{ mikutter_ver }}.tar.gz"
 
 - name: check exist mikutter directory
   stat: path={{ mikutter_path }}
