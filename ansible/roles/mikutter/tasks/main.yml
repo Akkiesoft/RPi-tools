@@ -1,41 +1,67 @@
 # Require roles: jessie, ruby2.1
 
+# Checking
+
 - name: copy mikutter version check script
   copy: >
     src=chk-mikutter-ver.py
     dest=/tmp/chk-mikutter-ver.py
   always_run: yes
 
-- name: check latest version of mikutter
+- name: check latest version of mikutter (1/2)
   command: /usr/bin/python /tmp/chk-mikutter-ver.py
   register: latest_ver
   changed_when: no
   always_run: yes
-
-- fail: msg="Failed to get mikutter version. Check the internet connectivity of target machine or try again later."
+- name: check latest version of mikutter (2/2)
+  fail: msg="Failed to get mikutter version. Check the internet connectivity of target machine or try again later."
   when: latest_ver.rc
 
 - set_fact:
     mikutter_ver: "{{ latest_ver.stdout }}"
     mikutter_tarball: "{{ ansible_env.HOME }}/mikutter.{{ latest_ver.stdout }}.tar.gz"
-
-- name: get latest mikutter
-  get_url: >
-    url=http://mikutter.hachune.net/bin/mikutter.{{ mikutter_ver }}.tar.gz
-    dest={{ mikutter_tarball }}
-  register: dl_mikutter
+    # デフォルト値
+    exist_mikutter_ver:
+      - "mikutter"
+      - "3.2.9"
 
 - name: check exist mikutter directory
   stat: >
     path={{ ansible_env.HOME }}/mikutter
   register: mikutter_check
 
+- name: check exist mikutter version
+  command: ruby {{ ansible_env.HOME }}/mikutter/mikutter.rb --version
+  register: exist_mikutter_ver
+  when: mikutter_check.stat.exists
+  changed_when: no
+  failed_when: no
+  always_run: yes
+
+# 存在しているmikutterのバージョンを上書格納
+- set_fact:
+    exist_mikutter_ver: "{{ exist_mikutter_ver.stdout.split(' ') }}"
+  when:
+    - mikutter_check.stat.exists
+    - not exist_mikutter_ver.rc
+
+- name: compare version
+  set_fact:
+    install_flag: "{{ exist_mikutter_ver[1] | version_compare(mikutter_ver, '<') }}"
+
+# Install start
+
+- name: get latest mikutter
+  get_url: >
+    url=http://mikutter.hachune.net/bin/mikutter.{{ mikutter_ver }}.tar.gz
+    dest={{ mikutter_tarball }}
+  when: install_flag
+
 - name: backup exist mikutter
   command: mv {{ ansible_env.HOME }}/mikutter {{ ansible_env.HOME }}/mikutter_{{ansible_date_time.iso8601}}
   when:
+    - install_flag
     - mikutter_check.stat.exists
-    - dl_mikutter | changed
-# TODO: 既存のmikutterのバージョンチェック方法はそのうち改善したい
 
 - name: unarchive tarball
   unarchive: >
@@ -43,14 +69,10 @@
     src={{ mikutter_tarball }}
     dest={{ ansible_env.HOME }}
   when:
-    - mikutter_check.stat.exists
-    - dl_mikutter | changed
+    - install_flag
 
 - name: run bundler (at first time, this may take a lot of minutes.)
   command: bundle chdir={{ ansible_env.HOME }}/mikutter
-  when:
-    - mikutter_check.stat.exists
-    - dl_mikutter | changed
 
 - name: generate desktop menu
   template: >

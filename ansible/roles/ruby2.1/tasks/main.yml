@@ -10,19 +10,20 @@
   with_items:
     - ruby2.1
     - ruby2.1-dev
-    - bundler
   sudo: yes
 
 - name: set alternatives for ruby
   alternatives: >
     name={{ item.name }}
     path={{ item.path }}
+    link={{ item.link }}
   with_items:
     - name: ruby
       path: /usr/bin/ruby2.1
+      link: /usr/bin/ruby
     - name: gem
       path: /usr/bin/gem2.1
-  when: ansible_distribution_release == "wheezy"
+      link: /usr/bin/gem
   sudo: yes
 
 - name: install bundler
