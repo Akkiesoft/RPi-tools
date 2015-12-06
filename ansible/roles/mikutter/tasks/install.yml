@@ -19,6 +19,13 @@
     dest={{ install_path }}
   when: install_flag
 
+- name: install nokogiri for Mac OS X
+  command: gem install nokogiri -- --use-system-libraries 
+           --with-xml2-include=/usr/include/libxml2
+           --with-xml2-lib=/usr/lib/
+  when: ansible_os_family == "Darwin"
+  sudo: yes
+
 - name: run bundler (at first time, this may take a lot of minutes.)
   command: bundle chdir={{ mikutter_path }}
 
@@ -27,4 +34,6 @@
     src=mikutter.desktop.j2
     dest=/usr/share/applications/mikutter.desktop
     mode=0755
+  when:
+    - ansible_os_family != "Darwin"
   sudo: yes
