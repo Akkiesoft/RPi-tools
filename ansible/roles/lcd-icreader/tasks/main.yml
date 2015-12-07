@@ -63,6 +63,7 @@
 - name: install libpafe
   command: make install chdir=/home/pi/libpafe-0.0.8
   when: not libpafe_so.stat.exists
+  notify: run ldconfig
   sudo: yes
 
 - name: copy udev rule for libpafe

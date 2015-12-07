@@ -1,3 +1,7 @@
+- name: run ldconfig
+  command: ldconfig
+  sudo: yes
+
 - name: reload udev
   command: udevadm control --reload-rules
   sudo: yes
