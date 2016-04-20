@@ -101,15 +101,14 @@
   when: not pasori_so.stat.exists
   sudo: yes
 
-# https://gist.github.com/Akkiesoft/6971348
-- name: download lcd.rb
-  get_url: >
-    url=https://gist.githubusercontent.com/Akkiesoft/6971348/raw/de0f98bf7d469eb71db4a466c6bcdf396a2a335a/lcd.rb
+- name: copy ic-reader.rb
+  copy: >
+    src=ic-reader.rb
     dest=/home/pi/
 
-- name: set autostart lcd.rb
+- name: set autostart ic-reader.rb
   lineinfile: >
     dest=/etc/rc.local
     insertbefore="exit 0"
-    line="sudo /usr/bin/ruby /home/pi/lcd.rb &"
+    line="sudo /usr/bin/ruby /home/pi/ic-reader.rb &"
   sudo: yes
