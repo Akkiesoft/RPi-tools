@@ -1,2 +1,10 @@
-- include: network-manager.yml
-- include: wifi.yml
+- name: copy wi-fi configuration
+  template: >
+    src=wifi.j2
+    dest=/etc/NetworkManager/system-connections/{{ item.ssid }}
+    mode=0600
+    owner=root
+    group=root
+  with_items: wifi
+  notify: restart network-manager
+  sudo: yes

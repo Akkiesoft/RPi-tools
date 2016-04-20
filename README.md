@@ -4,19 +4,20 @@
 
 ## Ansible playbook
 
-Raspberry Piの各種環境構築に役立つかもしれないPlaybookをまとめたものである。Ansible バージョン1.9.2で動作を確認済み。
+Raspberry Piの各種環境構築に役立つかもしれないPlaybookをまとめたものである。Ansible バージョン1.9系で動作するとおもう。
 
 ### Role 一覧
 
 | role名 | 内容 | 依存するRole | varsの有無 |
 | --- | --- | --- | --- |
-| jessie | Wheezy環境にJessieのリポジトリを追加する | なし |
-| lcd-icreader | SB1602系などのI2C通信のLCDモジュールを使ってRC-S320でICカードの残高を表示する環境を構築する | なし |
+| jessie | Wheezy環境にJessieのリポジトリを追加する | なし | なし |
+| lcd-icreader | SB1602系などのI2C通信のLCDモジュールを使ってRC-S320でICカードの残高を表示する環境を構築する | なし | なし |
 | mikutter | mikutterをインストールする | jessie, ruby2.1 | なし |
-| mt7650u | GW-450Dなどmt7650uチップのWi-Fiドライバをインストールする（ドライバーバイナリは別途用意が必要） | なし |
-| rpi-source | ドライバーやカーネルコンパイル用の環境を構築する | なし |
+| mt7650u | GW-450Dなどmt7650uチップのWi-Fiドライバをインストールする（ドライバーバイナリは別途用意が必要） | なし | なし |
+| network-manager | NetworkManagerを導入する | なし | なし | 
+| rpi-source | ドライバーやカーネルコンパイル用の環境を構築する | なし | なし |
 | ruby2.1 | Ruby 2.1をインストールする | jessie | なし |
-| wifi | NetworkManagerの導入およびWi-Fi設定 | あり |
+| wifi | NetworkManager用のWi-Fi設定ファイルを投入する | network-manager | あり |
 
 ### vars
 
