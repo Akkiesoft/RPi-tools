@@ -1,7 +1,7 @@
 - name: copy l-05a usb_modeswitch config
   copy: >
     src=l05a_usb_modeswitch
-    dest=/etc/usb_modeswitch.d/1004:613a
+    dest="/etc/usb_modeswitch.d/1004:613a"
     mode=0644
     owner=root
     group=root
