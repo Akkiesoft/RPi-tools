@@ -1,0 +1,25 @@
+[connection]
+id={{ item.name }}
+uuid={{ item.apn | to_uuid() }}
+type=gsm
+autoconnect=true
+
+[ppp]
+refuse-eap=true
+refuse-mschap=true
+refuse-mschapv2=true
+
+[ipv6]
+method=auto
+
+[ipv4]
+method=auto
+
+[serial]
+baud=460800
+
+[gsm]
+number={{ item.number }}
+username={{ item.username }}
+password={{ item.password }}
+apn={{ item.apn }}

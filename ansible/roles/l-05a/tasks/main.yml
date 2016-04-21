@@ -1,0 +1,20 @@
+- name: copy l-05a usb_modeswitch config
+  copy: >
+    src=l05a_usb_modeswitch
+    dest=/etc/usb_modeswitch.d/1004:613a
+    mode=0644
+    owner=root
+    group=root
+  sudo: yes
+
+- name: copy ppp configuration
+  template: >
+    src=ppp.j2
+    dest=/etc/NetworkManager/system-connections/{{ item.name }}
+    mode=0600
+    owner=root
+    group=root
+  with_items: mobile_network
+  notify: restart network-manager
+  sudo: yes
+

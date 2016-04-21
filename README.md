@@ -11,6 +11,7 @@ Raspberry Piの各種環境構築に役立つかもしれないPlaybookをまと
 | role名 | 内容 | 依存するRole | varsの有無 |
 | --- | --- | --- | --- |
 | jessie | Wheezy環境にJessieのリポジトリを追加する | なし | なし |
+| l-05a | NetworkManagerでL-05Aを使用してモバイル接続する | network-manager | あり |
 | lcd-icreader | SB1602系などのI2C通信のLCDモジュールを使ってRC-S320でICカードの残高を表示する環境を構築する | なし | なし |
 | mikutter | mikutterをインストールする | jessie, ruby2.1 | なし |
 | mt7650u | GW-450Dなどmt7650uチップのWi-Fiドライバをインストールする（ドライバーバイナリは別途用意が必要） | なし | なし |
@@ -30,6 +31,19 @@ wifi:
   - type: wpa-pskもしくはwep
     ssid: SSID名
     pass: パスフレーズ
+```
+
+#### l-05a role用のvars
+
+複数記述が可能（うまく動くかは不明）。
+
+```
+mobile_network:
+  - name: NetworkManagerの接続名
+    number: 接続先の番号
+    username: ユーザー名
+    password: パスワード
+    apn: APN
 ```
 
 ### hosts
