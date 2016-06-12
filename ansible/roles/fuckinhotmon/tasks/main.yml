@@ -1,0 +1,70 @@
+- name: install packages
+  apt: >
+    name={{ item }}
+    state=present
+  with_items:
+    - python-pip
+    - python-dev
+    - python-pil
+    - vim
+    - eject
+  sudo: yes
+
+- name: clone Adafruit_Nokia_LCD
+  git: >
+    repo=https://github.com/adafruit/Adafruit_Nokia_LCD
+    dest=/home/pi/Adafruit_Nokia_LCD
+
+- name: install Adafruit_Nokia_LCD
+  command: python setup.py install chdir=/home/pi/Adafruit_Nokia_LCD
+  sudo: yes
+
+- name: install py-zabbix
+  pip: >
+    name=py-zabbix
+    state=present
+  sudo: yes
+  when: use_zabbix
+
+- name: get image files
+  get_url: >
+    url={{ item.url }}
+    dest={{ item.dest }}
+  with_items:
+    - url: http://cdn-ak.f.st-hatena.com/images/fotolife/A/Akkiesoft/20150719/20150719122550.png
+      dest: /home/pi/shachikuchan.png
+    - url: http://cdn-ak.f.st-hatena.com/images/fotolife/A/Akkiesoft/20150719/20150719122544.png
+      dest: /home/pi/hot.png
+    - url: http://cdn-ak.f.st-hatena.com/images/fotolife/A/Akkiesoft/20151225/20151225164317.png
+      dest: /home/pi/samui.png
+    - url: http://dl.dafont.com/dl/?f=minecraftia
+      dest: /tmp/minecraftia.zip
+
+- name: copy fuckinhotmon.py
+  template: >
+    src=fuckinhotmon.py
+    dest=/home/pi/fuckinhotmon.py
+    mode=0755
+
+- name: unarchive minecraftia font
+  unarchive: >
+    copy=no
+    src=/tmp/minecraftia.zip
+    dest=/home/pi/
+
+- name: enable 1-Wire
+  lineinfile: >
+    dest=/boot/config.txt
+    regexp="^dtoverlay=w1-gpio"
+    line="dtoverlay=w1-gpio"
+    state=present
+  sudo: yes
+  when: not ds18b20_override_gpio
+
+- name: enable 1-Wire with override gpiopin
+  lineinfile: >
+    dest=/boot/config.txt
+    regexp="^dtoverlay=w1-gpio"
+    line="dtoverlay=w1-gpio,gpiopin={{ ds18b20_gpio_data }}"
+  sudo: yes
+  when: ds18b20_override_gpio

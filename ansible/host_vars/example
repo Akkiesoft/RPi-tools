@@ -1,7 +1,44 @@
 ---
 
-# for Wi-Fi role
+# for Wi-Fi role START
 wifi:
   - type: wpa-psk
     ssid: mywifi
     pass: mywifipass
+# for Wi-Fi role END
+
+
+# for L-05A role START
+mobile_network:
+  - name: "mymobilenetwork"
+    number: "123456"
+    username: "my@mobile"
+    password: "pass"
+    apn: "example.com"
+# for L-05A role END
+
+
+# for fuckinhotmon role START
+# Local Temperature
+use_ds18b20: yes
+ds18b20_id: 28-000000000000
+
+# Configure below lines if override gpio port.
+# http://akkiesoft.hatenablog.jp/entry/20150722/1437561722
+ds18b20_override_gpio: no
+ds18b20_gpio_data: 26
+ds18b20_gpio_vcc: 19
+
+# Zabbix Option
+use_zabbix: no
+zabbix_url: http://192.168.0.100/zabbix
+zabbix_user: fuckinhot
+zabbix_pass: fuckinhot
+zabbix_item_id: 12345
+
+# threshould
+threshold:
+  hot: 30
+  cold: 20
+# for fuckinhotmon role END
+
