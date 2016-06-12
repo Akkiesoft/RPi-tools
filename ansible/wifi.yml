@@ -3,3 +3,4 @@
   roles:
   - network-manager
   - wifi
+  - rtl8192cu
