@@ -101,14 +101,14 @@
   when: not pasori_so.stat.exists
   sudo: yes
 
-- name: copy ic-reader.rb
+- name: copy lcd-icreader.rb
   copy: >
-    src=ic-reader.rb
+    src=lcd-icreader.rb
     dest=/home/pi/
 
-- name: set autostart ic-reader.rb
+- name: set autostart lcd-icreader.rb
   lineinfile: >
     dest=/etc/rc.local
     insertbefore="exit 0"
-    line="sudo /usr/bin/ruby /home/pi/ic-reader.rb &"
+    line="sudo /usr/bin/ruby /home/pi/lcd-icreader.rb &"
   sudo: yes

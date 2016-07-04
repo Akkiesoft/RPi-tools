@@ -181,19 +181,14 @@ begin
             break
           }
         }
-      elsif (s == 0xA604)
-        felica2.foreach(0x00CF) {|l|
-          data = l.unpack('NNNCCCC')
-          card["balance"] = data[4] << 16 | data[5] << 8 | data[6]
-          card["name"] = "LuLuCa"
-          break
-        }
-      elsif (s == 0x0F04)
-        felica2.foreach(0x030F) {|l|
-          data = l.unpack('NNNCSC')
-          card["balance"] = data[4]
-          card["name"] = "ﾅｲｽﾊﾟｽ"
-          break
+      elsif (s == -28735)
+        pasori.felica_polling(Felica::POLLING_ANY) {|felica2|
+          felica2.foreach(0x028F) {|l|
+            data = l.unpack('nnnnnvnn')
+            card["balance"] = data[5]
+            card["name"] = "OKICA"
+            break
+          }
         }
       else
         if (s != 1223 && s != -32638 && s != -31445)
