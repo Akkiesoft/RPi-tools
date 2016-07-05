@@ -8,7 +8,7 @@
     - i2c-tools
     - gcc
     - libusb-1.0-0-dev
-    - ruby1.9.3
+    - ruby
     - ruby-dev
     - wiringpi
   sudo: yes
@@ -85,7 +85,7 @@
     copy=no
 
 - name: check exist libpafe-ruby module
-  stat: path=/usr/local/lib/site_ruby/1.9.1/arm-linux-eabihf/pasori.so
+  stat: path=/usr/local/lib/site_ruby/arm-linux-eabihf/pasori.so
   register: pasori_so
 
 - name: ruby extconf.rb
