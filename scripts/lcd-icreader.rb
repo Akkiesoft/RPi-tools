@@ -163,8 +163,10 @@ begin
               cnt += 1
               next
             end
-            data = l.unpack('CCC')
-            card["point"] = data[0] << 16 | data[1] << 8 | data[2]
+            data = l.unpack('CCCvCCC')
+            p1 = data[0] << 16 | data[1] << 8 | data[2]
+            p2 = data[4] << 16 | data[5] << 8 | data[6]
+            card["point"] = p1 + p2
             break
           }
           # waon balance
