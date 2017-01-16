@@ -1,0 +1,51 @@
+- name: install python packages
+  apt: >
+    name={{ item }}
+    state=present
+    update_cache=yes
+    cache_valid_time=3600
+  with_items:
+    - python-pip
+    - python-picamera
+    - python-paramiko
+  become: yes
+
+- name: install blinkt python library
+  pip: >
+    name=blinkt
+    state=present
+  become: yes
+
+- name: copy camera script
+  template: >
+    src=camera.py
+    dest=/home/pi/camera.py
+    mode=0755
+
+- name: touch count.dat
+  file: >
+    path={{ count_file }}
+    state=touch
+
+- name: copy stop script
+  copy: >
+    src=clear_blinkt.py
+    dest=/home/pi/clear_blinkt.py
+    mode=0755
+
+- name: copy camera service script
+  copy: >
+    src=camera.service
+    dest=/etc/systemd/system/camera.service
+    mode=0644
+  become: yes
+  notify: run systemctl daemon-reload
+
+- meta: flush_handlers
+
+- name: enable and start camera service
+  service: >
+    name=camera
+    enabled=yes
+    state=started
+  become: yes

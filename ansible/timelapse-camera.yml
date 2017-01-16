@@ -1,0 +1,4 @@
+---
+- hosts: timelapse-camera
+  roles:
+  - timelapse-camera

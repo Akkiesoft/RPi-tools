@@ -20,6 +20,7 @@ Raspberry Piの各種環境構築に役立つかもしれないPlaybookをまと
 | rpi-source | ドライバーやカーネルコンパイル用の環境を構築する | なし | なし |
 | rtl8192cu | rtl8192cuドライバーの省電力オプションを無効化する | なし | なし |
 | ruby2.1 | Ruby 2.1をインストールする | jessie | なし |
+| timelapse-camera | タイムラプスカメラ環境を作る | なし | なし |
 | wifi | NetworkManager用のWi-Fi設定ファイルを投入する | network-manager | あり |
 
 ### vars
@@ -72,6 +73,19 @@ zabbix_item_id: 12345 (アイテムID)
 threshold:
   hot: 30 (この室温以上になったら暑い時用の画像に切り替える)
   cold: 20 (この室温を下回ったら寒い時用の画像に切り替える)
+```
+
+#### timelapse-camera role用のvars
+
+```
+host: example.com (撮影した写真をSCPでアップロードするホスト)
+port: 22 (撮影した写真をSCPでアップロードするホストのポート)
+user: user (撮影した写真をSCPでアップロードするホストのユーザー)
+private_key_path: /home/pi/.ssh/id_rsa (SSH接続するときの秘密鍵)
+photo_file: /home/pi/photo.jpg (撮影した写真を保存するパス)
+count_file: /home/pi/count.dat (カウントファイルのパス)
+remote_path: /var/www/html/data (撮影した写真をSCPでアップロードする先のディレクトリ)
+remote_count_path: /var/www/html/count.dat (カウントファイルのSCPアップロード先パス)
 ```
 
 ### hosts
