@@ -1,5 +1,5 @@
 ---
-- hosts: all
+- hosts: mikutter
   roles:
   - jessie
   - ruby2.1

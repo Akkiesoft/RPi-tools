@@ -1,5 +1,5 @@
 ---
-- hosts: all
+- hosts: l-05a
   roles:
   - network-manager
   - l-05a
