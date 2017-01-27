@@ -1,0 +1,9 @@
+---
+
+# for L-05A role
+mobile_network:
+  - name: "mymobilenetwork"
+    number: "123456"
+    username: "my@mobile"
+    password: "pass"
+    apn: "example.com"

@@ -1,0 +1,11 @@
+---
+
+# for timelapse-camera role
+host: example.com
+port: 22
+user: user
+private_key_path: /home/pi/.ssh/id_rsa
+photo_file: /home/pi/photo.jpg
+count_file: /home/pi/count.dat
+remote_path: /var/www/html/data
+remote_count_path: /var/www/html/count.dat
