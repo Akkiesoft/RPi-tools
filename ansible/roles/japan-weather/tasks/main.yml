@@ -1,0 +1,36 @@
+- name: install python packages
+  apt: >
+    name={{ item }}
+    state=present
+  with_items:
+    - python-pip
+    - python-dev
+  become: yes
+
+- name: install python modules
+  pip: >
+    name={{ item }}
+    state=present
+  with_items:
+    - sense-hat
+    - pyowm
+  become: yes
+
+- name: copy scripts
+  template: >
+    src={{ item }}
+    dest=/home/pi/{{ item }}
+    owner=pi
+    group=pi
+    mode=0755
+  with_items:
+    - japan_weather_sensehat.py
+
+- name: enable i2c
+  lineinfile: >
+    dest=/boot/config.txt
+    regexp='^dtparam=i2c_arm'
+    insertafter='^dtparam=i2c_arm'
+    line='dtparam=i2c_arm=on'
+    state=present
+  become: yes
