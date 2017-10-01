@@ -1,19 +1,18 @@
-- name: install python packages
+- name: install debian packages
   apt: >
     name={{ item }}
     state=present
   with_items:
     - python-pip
     - python-dev
+    - sense-hat
+    - python-pil
   become: yes
 
-- name: install python modules
+- name: install python pyowm modules
   pip: >
-    name={{ item }}
+    name=pyowm
     state=present
-  with_items:
-    - sense-hat
-    - pyowm
   become: yes
 
 - name: copy scripts
