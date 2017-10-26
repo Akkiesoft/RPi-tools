@@ -17,6 +17,7 @@ Raspberry Piの各種環境構築に役立つかもしれないPlaybookをまと
 | mikutter | mikutterをインストールする | jessie, ruby2.1 | なし |
 | mt7650u | GW-450Dなどmt7650uチップのWi-Fiドライバをインストールする（ドライバーバイナリは別途用意が必要） | なし | なし |
 | network-manager | NetworkManagerを導入する | なし | なし | 
+| profile-print | TOSHIBA TEC B-EP2DLプリンターで名札プリンターを作る | なし | なし |
 | rpi-source | ドライバーやカーネルコンパイル用の環境を構築する | なし | なし |
 | rtl8192cu | rtl8192cuドライバーの省電力オプションを無効化する | なし | なし |
 | ruby2.1 | Ruby 2.1をインストールする | jessie | なし |

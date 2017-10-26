@@ -1,0 +1,36 @@
+- name: install packages
+  apt: >
+    name={{ item }}
+    state=present
+  with_items:
+    - cups
+    - python3-minimal
+    - python3-pip
+  become: yes
+
+- name: install escpos
+  pip: >
+    name=python-escpos
+    state=present
+    executable=pip3
+  become: yes
+
+- name: copy systemd script
+  copy: >
+    src="profile-print.service"
+    dest="/etc/systemd/system/profile-print.service"
+  become: yes
+
+- name: copy profile_print script
+  copy: >
+    src=profile_print.py
+    dest=/home/pi/profile_print.py
+    mode=0755
+
+- name: enable service
+  systemd: >
+    name="profile-print"
+    daemon-reload=yes
+    enabled=yes
+    state=started
+  become: yes

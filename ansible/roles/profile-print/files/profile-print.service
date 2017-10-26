@@ -1,0 +1,13 @@
+[Unit]
+Description = Twitter profile printer Daemon
+Requires=network-online.target
+Wants=network-online.target
+After=network-online.target
+
+[Service]
+ExecStart = /usr/bin/python3 /home/pi/profile_print.py
+Restart = always
+Type = simple
+
+[Install]
+WantedBy = multi-user.target
