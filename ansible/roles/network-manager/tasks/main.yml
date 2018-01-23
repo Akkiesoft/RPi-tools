@@ -4,7 +4,7 @@
     state=present
     update_cache=yes
     cache_valid_time=3600
-  sudo: yes
+  become: yes
 
 - name: uninstall oldtype network management tool
   apt: >
@@ -13,7 +13,7 @@
   with_items:
     - dhcpcd5
     - ifplugd
-  sudo: yes
+  become: yes
 
 - name: clear network config fies
   copy: >
@@ -25,4 +25,4 @@
       dest: /etc/network/interfaces
     - src: wpa_supplicant.conf
       dest: /etc/wpa_supplicant/wpa_supplicant.conf
-  sudo: yes
+  become: yes
