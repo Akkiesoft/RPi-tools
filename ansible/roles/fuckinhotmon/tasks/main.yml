@@ -40,6 +40,12 @@
     - url: http://dl.dafont.com/dl/?f=minecraftia
       dest: /tmp/minecraftia.zip
 
+- name: copy fuckinhotmon.ini
+  template: >
+    src=fuckinhotmon.ini
+    dest=/home/pi/fuckinhotmon.ini
+    mode=0644
+
 - name: copy fuckinhotmon.py
   copy: >
     src=fuckinhotmon.py
