@@ -41,7 +41,7 @@
       dest: /tmp/minecraftia.zip
 
 - name: copy fuckinhotmon.py
-  template: >
+  copy: >
     src=fuckinhotmon.py
     dest=/home/pi/fuckinhotmon.py
     mode=0755
