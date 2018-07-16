@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
 import sys
+import signal
 import subprocess
 import time
 import datetime
@@ -45,6 +46,12 @@ except Exception as e:
   print("Could not read config file.: %s" % e)
   sys.exit(1)
 
+# exit if caught the SIGTERM
+def sigterm_handler(signal_number, stack_frame):
+    disp.clear()
+    disp.display()
+    sys.exit(0)   
+signal.signal(signal.SIGTERM, sigterm_handler)
 
 # functions to get temp from ds18b20
 def read_temp_raw():

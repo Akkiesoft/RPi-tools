@@ -1,0 +1,13 @@
+[Unit]
+Description = Fuckin hot temperature monitor
+Requires=network-online.target
+Wants=network-online.target
+After=network-online.target
+
+[Service]
+ExecStart = /usr/bin/python /home/pi/fuckinhotmon.py /home/pi/fuckinhotmon.ini
+Restart = always
+Type = simple
+
+[Install]
+WantedBy = multi-user.target

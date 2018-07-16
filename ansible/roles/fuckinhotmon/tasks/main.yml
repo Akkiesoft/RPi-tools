@@ -72,3 +72,16 @@
     line: "dtoverlay=w1-gpio,gpiopin={{ ds18b20_gpio_data }}"
   become: yes
   when: ds18b20_override_gpio
+
+- name: copy fuckinhotmon.service
+  copy:
+    src: fuckinhotmon.service
+    dest: /etc/systemd/system/fuckinhotmon.service
+  become: yes
+
+- name: enable fuckinhotmon.service
+  systemd:
+    name: fuckinhotmon.service
+    enabled: yes
+    state: restarted
+  become: yes
