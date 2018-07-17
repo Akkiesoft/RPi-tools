@@ -1,0 +1,5 @@
+# LG L-08C
+TargetVendor=0x1004
+TargetProduct=0x61eb
+StandardEject=1
+WaitBefore=5
