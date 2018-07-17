@@ -11,6 +11,7 @@ Raspberry Piの各種環境構築に役立つかもしれないPlaybookをまと
 | role名 | 内容 | 依存するRole | varsの有無 |
 | --- | --- | --- | --- |
 | bme280tozabbix | bme280の値をZabbixに送りつける | なし | あり |
+| japan-weather | 日本全国の天気をOpenWeatherMapで拾いSenseHATかUnicorn HATに表示 | なし | あり |
 | l-05a | NetworkManagerでL-05Aを使用してモバイル接続する | network-manager | あり |
 | fuckinhotmon | DS18B20もしくはZabbixから取得する室温をNokia5110LCDで表示する環境を構築する | なし | あり |
 | lcd-icreader | SB1602系などのI2C通信のLCDモジュールを使ってRC-S320でICカードの残高を表示する環境を構築する | なし | なし |
@@ -92,6 +93,12 @@ remote_count_path: /var/www/html/count.dat (カウントファイルのSCPアッ
 
 ```
 zabbix_hostname: 192.168.0.100
+```
+
+#### japan-weather role用のvars
+
+```
+your_api_key: abcdefg1234567
 ```
 
 ### hosts
