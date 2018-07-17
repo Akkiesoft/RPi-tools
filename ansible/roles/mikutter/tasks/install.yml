@@ -24,7 +24,7 @@
            --with-xml2-include=/usr/include/libxml2
            --with-xml2-lib=/usr/lib/
   when: ansible_os_family == "Darwin"
-  sudo: yes
+  become: yes
 
 - name: run bundler (at first time, this may take a lot of minutes.)
   command: bundle chdir={{ mikutter_path }}
@@ -36,4 +36,4 @@
     mode=0755
   when:
     - ansible_os_family != "Darwin"
-  sudo: yes
+  become: yes

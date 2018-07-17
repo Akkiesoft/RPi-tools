@@ -11,20 +11,20 @@
     - ruby
     - ruby-dev
     - wiringpi
-  sudo: yes
+  become: yes
 
 - name: install wiringpi module
   gem: >
     name=wiringpi
     state=present
-  sudo: yes
+  become: yes
 
 - name: enable i2c
   lineinfile: >
     dest=/boot/config.txt
     line="dtparam=i2c_arm=on"
   notify: reboot
-  sudo: yes
+  become: yes
 
 - name: enable i2c
   lineinfile: >
@@ -34,7 +34,7 @@
     - i2c-bcm2708 
     - i2c-dev
   notify: reboot
-  sudo: yes
+  become: yes
 
 
 - name: download libpafe
@@ -64,14 +64,14 @@
   command: make install chdir=/home/pi/libpafe-0.0.8
   when: not libpafe_so.stat.exists
   notify: run ldconfig
-  sudo: yes
+  become: yes
 
 - name: copy udev rule for libpafe
   copy:
     src=60-libpafe.rules
     dest=/etc/udev/rules.d
   notify: reload udev
-  sudo: yes
+  become: yes
 
 - name: download libpafe-ruby
   get_url: >
@@ -99,7 +99,7 @@
 - name: install libpafe-ruby
   command: make install chdir=/home/pi/libpafe-ruby
   when: not pasori_so.stat.exists
-  sudo: yes
+  become: yes
 
 - name: copy lcd-icreader.rb
   copy: >
@@ -110,5 +110,5 @@
   lineinfile: >
     dest=/etc/rc.local
     insertbefore="exit 0"
-    line="sudo /usr/bin/ruby /home/pi/lcd-icreader.rb &"
-  sudo: yes
+    line="become /usr/bin/ruby /home/pi/lcd-icreader.rb &"
+  become: yes

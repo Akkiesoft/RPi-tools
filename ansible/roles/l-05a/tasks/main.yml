@@ -10,7 +10,7 @@
       id: "1004:613a"
     - model: "l08c"
       id: "1004:61eb"
-  sudo: yes
+  become: yes
 
 - name: copy ppp configuration
   template: >
@@ -21,4 +21,4 @@
     group=root
   with_items: "{{ mobile_network }}"
   notify: restart network-manager
-  sudo: yes
+  become: yes

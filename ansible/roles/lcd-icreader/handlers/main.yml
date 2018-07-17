@@ -1,11 +1,11 @@
 - name: run ldconfig
   command: ldconfig
-  sudo: yes
+  become: yes
 
 - name: reload udev
   command: udevadm control --reload-rules
-  sudo: yes
+  become: yes
 
 - name: reboot
   command: reboot
-  sudo: yes
+  become: yes

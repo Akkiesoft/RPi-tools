@@ -6,13 +6,13 @@
     state=present
     update_cache=yes
     cache_valid_time=3600
-  sudo: yes
+  become: yes
   when: ansible_os_family != "Darwin"
 
 - name: check latest version of mikutter
   uri: url="http://mikutter.hachune.net/download/unstable.json?count=1"
   register: mikutter_json
-  always_run: yes
+  check_mode: no
 
 - fail: msg="can't get latest mikutter version!"
   when: mikutter_json.json[0].version_string is not defined
@@ -33,7 +33,7 @@
   when: mikutter_check.stat.exists
   changed_when: no
   failed_when: no
-  always_run: yes
+  check_mode: no
 
 # 存在しているmikutterのバージョンを上書格納
 - set_fact:

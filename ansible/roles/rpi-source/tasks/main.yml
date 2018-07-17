@@ -27,7 +27,7 @@
     - libc6
     - libc6-dev
   when: ansible_distribution_release == "wheezy"
-  sudo: yes
+  become: yes
 
 - name: install gcc-4.8(for jessie)
   apt: >
@@ -41,36 +41,36 @@
     - cpp-4.8
     - g++-4.8
   when: ansible_distribution_release == "jessie"
-  sudo: yes
+  become: yes
   
 - name: install other packeages
   apt: >
     name=libncurses5-dev
     state=present
-  sudo: yes
+  become: yes
 
 - name: mark as auto-installed packages(for wheezy)
   command: apt-mark auto libmpfr4 cpp-4.8 libgcc-4.8-dev libgcc1 libc6-dev libc-dev-bin libc6
   when: ansible_distribution_release == "wheezy"
-  sudo: yes
+  become: yes
 
 - name: set alternatives
   alternatives: >
     name=gcc
     path=/usr/bin/gcc-4.8
     link=/usr/bin/gcc
-  sudo: yes
+  become: yes
 
 - name: download rpi-source
   get_url: >
     url=https://raw.githubusercontent.com/notro/rpi-source/master/rpi-source
     dest=/usr/bin/rpi-source
     mode=0755
-  sudo: yes
+  become: yes
 
 - name: rpi-source tag update
   command: /usr/bin/rpi-source -q --tag-update
-  sudo: yes
+  become: yes
 
 - name: run rpi-source
   command: rpi-source
