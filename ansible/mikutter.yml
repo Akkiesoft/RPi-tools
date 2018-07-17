@@ -1,6 +1,4 @@
 ---
 - hosts: mikutter
   roles:
-  - jessie
-  - ruby2.1
   - mikutter

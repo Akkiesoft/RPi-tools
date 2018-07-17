@@ -4,5 +4,4 @@
 
 - hosts: raspbian-build-driver-compile-env
   roles:
-  - jessie
   - rpi-source

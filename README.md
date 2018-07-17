@@ -10,17 +10,15 @@ Raspberry Piの各種環境構築に役立つかもしれないPlaybookをまと
 
 | role名 | 内容 | 依存するRole | varsの有無 |
 | --- | --- | --- | --- |
-| jessie | Wheezy環境にJessieのリポジトリを追加する | なし | なし |
 | l-05a | NetworkManagerでL-05Aを使用してモバイル接続する | network-manager | あり |
 | fuckinhotmon | DS18B20もしくはZabbixから取得する室温をNokia5110LCDで表示する環境を構築する | なし | あり |
 | lcd-icreader | SB1602系などのI2C通信のLCDモジュールを使ってRC-S320でICカードの残高を表示する環境を構築する | なし | なし |
-| mikutter | mikutterをインストールする | jessie, ruby2.1 | なし |
+| mikutter | mikutterをインストールする | なし | なし |
 | mt7650u | GW-450Dなどmt7650uチップのWi-Fiドライバをインストールする（ドライバーバイナリは別途用意が必要） | なし | なし |
 | network-manager | NetworkManagerを導入する | なし | なし | 
 | profile-print | TOSHIBA TEC B-EP2DLプリンターで名札プリンターを作る | なし | なし |
 | rpi-source | ドライバーやカーネルコンパイル用の環境を構築する | なし | なし |
 | rtl8192cu | rtl8192cuドライバーの省電力オプションを無効化する | なし | なし |
-| ruby2.1 | Ruby 2.1をインストールする | jessie | なし |
 | timelapse-camera | タイムラプスカメラ環境を作る | なし | なし |
 | wifi | NetworkManager用のWi-Fi設定ファイルを投入する | network-manager | あり |
 
@@ -109,8 +107,6 @@ mikutter.yml
 ---
 - hosts: all
   roles:
-  - jessie
-  - ruby2.1
   - mikutter
   - wifi
 ```
