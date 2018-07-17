@@ -1,0 +1,4 @@
+---
+- hosts: all
+  roles:
+  - bme280tozabbix

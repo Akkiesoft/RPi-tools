@@ -4,12 +4,13 @@
 
 ## Ansible playbook
 
-Raspberry Piの各種環境構築に役立つかもしれないPlaybookをまとめたものである。Ansible バージョン1.9系で動作するとおもう。
+Raspberry Piの各種環境構築に役立つかもしれないPlaybookをまとめたものである。Ansible バージョン2系で動作するとおもう。
 
 ### Role 一覧
 
 | role名 | 内容 | 依存するRole | varsの有無 |
 | --- | --- | --- | --- |
+| bme280tozabbix | bme280の値をZabbixに送りつける | なし | あり |
 | l-05a | NetworkManagerでL-05Aを使用してモバイル接続する | network-manager | あり |
 | fuckinhotmon | DS18B20もしくはZabbixから取得する室温をNokia5110LCDで表示する環境を構築する | なし | あり |
 | lcd-icreader | SB1602系などのI2C通信のLCDモジュールを使ってRC-S320でICカードの残高を表示する環境を構築する | なし | なし |
@@ -85,6 +86,12 @@ photo_file: /home/pi/photo.jpg (撮影した写真を保存するパス)
 count_file: /home/pi/count.dat (カウントファイルのパス)
 remote_path: /var/www/html/data (撮影した写真をSCPでアップロードする先のディレクトリ)
 remote_count_path: /var/www/html/count.dat (カウントファイルのSCPアップロード先パス)
+```
+
+#### bme280tozabbix role用のvars
+
+```
+zabbix_hostname: 192.168.0.100
 ```
 
 ### hosts

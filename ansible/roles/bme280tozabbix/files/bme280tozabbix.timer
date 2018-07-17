@@ -1,0 +1,8 @@
+[Unit]
+Description=get temperature/humidity/pressure by bme280 and send to zabbix
+
+[Timer]
+OnUnitActiveSec=1min
+
+[Install]
+WantedBy=timers.target
