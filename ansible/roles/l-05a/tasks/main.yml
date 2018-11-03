@@ -1,24 +1,24 @@
 - name: copy usb_modeswitch config
-  copy: >
-    src="{{ item.model }}_usb_modeswitch"
-    dest="/etc/usb_modeswitch.d/{{ item.id }}"
-    mode=0644
-    owner=root
-    group=root
+  copy:
+    src: "{{ item.model }}_usb_modeswitch"
+    dest: "/etc/usb_modeswitch.d/{{ item.id }}"
+    mode: 0644
+    owner: root
+    group: root
   with_items:
-    - model: "l05a"
-      id: "1004:613a"
-    - model: "l08c"
-      id: "1004:61eb"
+  - model: "l05a"
+    id: "1004:613a"
+  - model: "l08c"
+    id: "1004:61eb"
   become: yes
 
 - name: copy ppp configuration
-  template: >
-    src=ppp.j2
-    dest="/etc/NetworkManager/system-connections/{{ item.name }}"
-    mode=0600
-    owner=root
-    group=root
+  template:
+    src: ppp.j2
+    dest: "/etc/NetworkManager/system-connections/{{ item.name }}"
+    mode: 0600
+    owner: root
+    group: root
   with_items: "{{ mobile_network }}"
   notify: restart network-manager
   become: yes
