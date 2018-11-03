@@ -1,35 +1,27 @@
 - name: install debian packages
-  apt: >
-    name={{ item }}
-    state=present
-  with_items:
+  apt:
+    name:
     - python-pip
     - python-dev
     - sense-hat
     - python-pil
+    state: present
   become: yes
 
 - name: install python pyowm modules
-  pip: >
-    name=pyowm
-    state=present
+  pip:
+    name: pyowm
+    state: present
   become: yes
 
 - name: copy scripts
-  template: >
-    src={{ item }}
-    dest=/home/pi/{{ item }}
-    owner=pi
-    group=pi
-    mode=0755
-  with_items:
-    - japan_weather_sensehat.py
+  template:
+    src: japan_weather_sensehat.py
+    dest: /home/pi/japan_weather_sensehat.py
+    owner: pi
+    group: pi
+    mode: 0755
 
 - name: enable i2c
-  lineinfile: >
-    dest=/boot/config.txt
-    regexp='^dtparam=i2c_arm'
-    insertafter='^dtparam=i2c_arm'
-    line='dtparam=i2c_arm=on'
-    state=present
+  command: raspi-config nonint do_i2c 0
   become: yes
