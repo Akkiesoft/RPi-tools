@@ -3,44 +3,43 @@
   become: yes
 
 - name: install packages
-  apt: >
-    name={{ item }}
-    state=present
-  with_items:
+  apt:
+    name:
     - i2c-tools
     - python-pip
     - python-smbus
     - zabbix-agent
+    state: present
   become: yes
 
 - name: install pip packages
-  pip: >
-    name={{ item }}
-  with_items:
+  pip:
+    name:
     - py-zabbix
     - RPi.bme280
+    state: present
   become: true
 
 - name: copy script
-  template: >
-    src=bme280tozabbix.py
-    dest=/home/pi/
-    mode=0755
+  template:
+    src: bme280tozabbix.py
+    dest: /home/pi/
+    mode: 0755
 
 - name: copy systemd timer
-  copy: >
-    src=bme280tozabbix.{{ item }}
-    dest=/etc/systemd/system/
-    mode=0644
+  copy:
+    src: bme280tozabbix.{{ item }}
+    dest: /etc/systemd/system/
+    mode: 0644
   with_items:
-    - service
-    - timer
+  - service
+  - timer
   become: yes
 
 - name: enable bme280tozabbix.timer
-  systemd: >
-    name=bme280tozabbix.timer
-    state=started
-    enabled=yes
-    daemon_reload=yes
+  systemd:
+    name: bme280tozabbix.timer
+    state: started
+    enabled: yes
+    daemon_reload: yes
   become: yes
