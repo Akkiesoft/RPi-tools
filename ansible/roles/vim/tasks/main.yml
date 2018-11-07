@@ -1,0 +1,26 @@
+- name: install vim
+  apt:
+    name: vim
+    state: present
+  become: yes
+
+- name: disable mouse
+  replace:
+    path: /usr/share/vim/vim80/defaults.vim
+    regexp: '^  set mouse=a'
+    replace: '"  set mouse=a'
+  become: yes
+
+- name: disable auto indent
+  replace:
+    path: /usr/share/vim/vim80/defaults.vim
+    regexp: "filetype plugin indent on"
+    replace: "filetype plugin indent off"
+  become: yes
+
+- name: disable scrolloff
+  replace:
+    path: /usr/share/vim/vim80/defaults.vim
+    regexp: "scrolloff=5"
+    replace: "scrolloff=0"
+  become: yes
