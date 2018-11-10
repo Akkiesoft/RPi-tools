@@ -1,2 +1,5 @@
-[wifi]
-raspberrypi.local ansible_ssh_user=pi
+[all]
+raspberrypi.local
+
+[all:vars]
+ansible_user=pi
