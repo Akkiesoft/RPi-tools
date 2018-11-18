@@ -1,0 +1,34 @@
+- set_fact:
+    config: |
+      export SLIDEFILE={{ slide.file }}
+      export SLIDESTORE={{ slide.store }}
+      export RESOLUTION={{ slide.resolution }}
+      export SLIDESECOND={{ slide.second }}
+  when: slide is defined
+
+- name: install packages
+  apt:
+    name:
+    - imagemagick
+    - feh
+    state: present
+  become: yes
+
+- name: copy script
+  copy:
+    src: "pdfslideshow.sh"
+    dest: "/home/pi/pdfslideshow.sh"
+    mode: 0755
+
+- name: copy script vars file
+  copy:
+    content: "{{ config }}"
+    dest: "/home/pi/pdfslideshow.env"
+  when: slide is defined
+
+- name: make cron to run script at start
+  cron:
+    name: "start pdf slideshow script at start"
+    job: "/home/pi/pdfslideshow.sh"
+    special_time: reboot
+    state: present

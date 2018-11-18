@@ -1,0 +1,6 @@
+---
+slide:
+  file: /boot/slide.pdf
+  store: /home/pi/pdfslideshow-images
+  resolution: 96
+  second: 10
