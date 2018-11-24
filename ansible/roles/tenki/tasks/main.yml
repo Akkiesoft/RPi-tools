@@ -1,0 +1,31 @@
+- name: ensure create directory
+  file:
+    path: /usr/share/fonts/truetype/
+    state: directory
+  become: yes
+
+- name: install fonts
+  get_url:
+    url: "{{ item }}"
+    dest: /usr/share/fonts/truetype/
+  with_items:
+  - http://www17.plala.or.jp/xxxxxxx/00ff/x14y24pxHeadUpDaisy.ttf
+  - http://www17.plala.or.jp/xxxxxxx/00ff/x8y12pxTheStrongGamer.ttf
+  become: yes
+
+- name: create directory for tenki
+  file:
+    path: /home/pi/tenki
+    state: directory
+
+- name: copy scripts
+  copy:
+    src: "tenki/{{ item }}"
+    dest: /home/pi/tenki
+  with_items:
+  - tenki.py
+  - tenki-base.png
+  - sunny.png
+  - cloudy.png
+  - rain.png
+  - snow.png
