@@ -26,7 +26,7 @@ width = disp.width
 height = disp.height
 
 # load font
-font = ImageFont.truetype("Koruri-Regular.ttf", 11)
+font = ImageFont.truetype("/usr/share/fonts/opentype/noto/NotoSansCJK-Regular.ttc", 11)
 
 TAG_RE = re.compile(r'<[^>]+>')
 def remove_tags(text):

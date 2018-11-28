@@ -1,0 +1,11 @@
+- name: install fonts-noto-cjk
+  apt:
+    name: fonts-noto-cjk
+    state: present
+  become: yes
+
+- name: copy sample scripts
+  copy:
+    src: oled-ssd1306-samples
+    dest: /home/pi/oled-ssd1306-samples
+    mode: 0755

@@ -1,0 +1,21 @@
+- name: install required packages
+  apt:
+    name:
+    - python-dev
+    - python-pip
+    - python-imaging
+    - python-smbus
+    state: present
+  become: yes
+
+- name: install required python packages
+  pip:
+    name:
+    - RPi.GPIO
+    - Adafruit-SSD1306
+    state: present
+  become: yes
+
+- name: enable i2c
+  command: /usr/bin/raspi-config nonint do_i2c 0
+  become: yes

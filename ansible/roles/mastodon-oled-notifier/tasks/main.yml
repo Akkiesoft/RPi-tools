@@ -1,0 +1,16 @@
+- name: install fonts-noto-cjk
+  apt:
+    name: fonts-noto-cjk
+    state: present
+  become: yes
+
+- name: mkdir /home/pi/oled-ssd1306
+  file:
+    path: /home/pi/oled-ssd1306
+    state: directory
+
+- name: copy script
+  copy:
+    src: mastodon-oled-notifier.py
+    dest: /home/pi/oled-ssd1306
+    mode: 0755
