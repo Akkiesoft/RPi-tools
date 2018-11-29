@@ -1,6 +1,6 @@
 # coding: utf-8
 
-# IC balance checker  /  2013-2015 @Akkiesoft
+# IC balance checker  /  2013-2018 @Akkiesoft
 #   Licence:
 #     MIT License
 #   references:
@@ -14,12 +14,12 @@ require "pasori"
 
 # For Switch Science i2c miniLCD
 #  https://www.switch-science.com/catalog/1405/
-contrast = "0x5d"
+contrast = 0x5d
 gpio_light = 0
 
 # For Strawberry Linux SB1602BW
 #  https://strawberry-linux.com/catalog/items?code=27021
-# contrast = "0x5e"
+# contrast = 0x5e
 # gpio_light = 7
 
 # Please set 0 to gpio_beep if if you don't have the buzzer.
@@ -28,25 +28,50 @@ gpio_beep=0
 class Lcd
   OUTPUT = 1
 
-  def initialize
-    @io = WiringPi::GPIO.new
-  end
-
-  def setLcdInfo(i2cset, i2cbus, chip_addr, light_gpio=0, beep_gpio, contrast)
-    @i2cset     = i2cset
-    @i2cbus     = i2cbus
+  def initialize(chip_addr, contrast, light_gpio=0, beep_gpio)
     @chip_addr  = chip_addr
+    @contrast   = contrast
     @light_gpio = light_gpio
     @beep_gpio  = beep_gpio
-    @contrast   = contrast
 
-    # if you are using Switch Science i2c miniLCD, comment out here.
+    @io = WiringPi::GPIO.new
+    @i2c = WiringPi::I2C.new(@chip_addr)
+
     if @light_gpio != 0
       @io.pin_mode(@light_gpio, OUTPUT)
     end
 
     if @beep_gpio != 0
       @io.pin_mode(@beep_gpio, OUTPUT)
+    end
+  end
+
+  def sendBlockData(reg, block)
+    block.each { |i| sendByteData(reg, i) }
+  end
+
+  def sendByteData(reg, byte)
+    @i2c.write_reg_8(reg, byte)
+  end
+
+  def reset
+    sendBlockData(0, [0x38, 0x39, 0x14, 0x78, @contrast, 0x6c])
+    sleep 0.25
+    sendBlockData(0, [0x0c, 0x01, 0x06])
+    sleep 0.05
+  end
+
+  def clear
+    sendBlockData(0, [1])
+  end
+
+  def moveCursor(x, y)
+    sendByteData(0, 128 + 64 * y + x)
+  end
+
+  def lcdprint(str)
+    for x in str.split(//)
+      sendByteData(0x40, x.ord)
     end
   end
 
@@ -67,36 +92,6 @@ class Lcd
       @io.digital_write(@beep_gpio, 0)
     end
   end
-
-  def sendBlockData(v1, v2)
-    `#{@i2cset} -y #{@i2cbus} #{@chip_addr} #{v1} #{v2} i`
-  end
-
-  def sendByteData(v1, v2)
-    `#{@i2cset} -y #{@i2cbus} #{@chip_addr} #{v1} #{v2} b`
-  end
-
-  def reset
-    sendBlockData(0, "0x38 0x39 0x14 0x78 " + @contrast + " 0x6c")
-    sleep 0.25
-    sendBlockData(0, "0x0c 0x01 0x06")
-    sleep 0.05
-  end
-
-  def clear
-    sendBlockData(0, 1)
-  end
-
-  def moveCursor(x, y)
-    sendByteData(0, 128 + 64 * x + y)
-  end
-
-  def lcdprint(str)
-    for x in str.split(//)
-      sendstr = sendstr.to_s + " " + x.ord.to_s
-    end
-    sendBlockData(0x40, sendstr.to_s)
-  end
 end
 
 def firstmessage(lcd)
@@ -105,8 +100,7 @@ def firstmessage(lcd)
   lcd.lcdprint("Please touch IC.")
 end
 
-lcd = Lcd.new
-lcd.setLcdInfo("/usr/sbin/i2cset", 1, 0x3e, gpio_light, gpio_beep, contrast)
+lcd = Lcd.new(0x3e, contrast, gpio_light, gpio_beep)
 
 lcd.reset
 lcd.clear
@@ -204,11 +198,11 @@ begin
     lcd.moveCursor(0,0)
     if card["name"] == "Unknown"
       lcd.lcdprint("Unknown card.")
-      lcd.moveCursor(1,0)
+      lcd.moveCursor(0,1)
       lcd.lcdprint("#{card["balance"]}")
     else
       lcd.lcdprint("#{card["name"]} ｻﾞﾝﾀﾞｶ:".encode("Shift_JIS"))
-      lcd.moveCursor(1,0)
+      lcd.moveCursor(0,1)
       balance = sprintf("%c%s", 0x5c, card["balance"]).encode("Shift_JIS")
       if card["point"]
         balance += sprintf("/%spts", card["point"]).encode("Shift_JIS")

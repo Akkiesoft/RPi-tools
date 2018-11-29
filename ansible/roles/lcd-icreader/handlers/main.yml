@@ -5,7 +5,3 @@
 - name: reload udev
   command: udevadm control --reload-rules
   become: yes
-
-- name: reboot
-  command: reboot
-  become: yes

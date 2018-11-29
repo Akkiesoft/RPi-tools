@@ -1,114 +1,111 @@
+- set_fact:
+    libpafe_url: "http://hito.music.coocan.jp/pasori"
+    libpafe_ver: 0.0.8
+    libpafe_ruby_ver: 0.0.8
+
+- set_fact:
+    libpafe_so: "/usr/local/lib/libpafe.so.{{ libpafe_ver }}"
+    pasori_so: /usr/local/lib/arm-linux-gnueabihf/site_ruby/pasori.so
+
 - name: install packages
-  apt: >
-    name={{ item }}
-    state=present
-    update_cache=yes
-    cache_valid_time=3600
-  with_items:
-    - i2c-tools
+  apt:
+    name:
     - gcc
     - libusb-1.0-0-dev
     - ruby
     - ruby-dev
     - wiringpi
+    state: present
+    update_cache: yes
+    cache_valid_time: 3600
   become: yes
 
 - name: install wiringpi module
-  gem: >
-    name=wiringpi
-    state=present
+  gem:
+    name: wiringpi
+    state: present
   become: yes
 
 - name: enable i2c
-  lineinfile: >
-    dest=/boot/config.txt
-    line="dtparam=i2c_arm=on"
-  notify: reboot
+  command: raspi-config nonint do_i2c 0
   become: yes
-
-- name: enable i2c
-  lineinfile: >
-    dest=/etc/modules
-    line={{ item }}
-  with_items:
-    - i2c-bcm2708 
-    - i2c-dev
-  notify: reboot
-  become: yes
-
 
 - name: download libpafe
-  get_url: >
-    url=http://homepage3.nifty.com/slokar/pasori/libpafe-0.0.8.tar.gz
-    dest=/home/pi/
+  get_url:
+    url: "{{ libpafe_url }}/libpafe-{{ libpafe_ver }}.tar.gz"
+    dest: /home/pi
 
 - name: unarchive libpafe
-  unarchive: >
-    src=/home/pi/libpafe-0.0.8.tar.gz
-    dest=/home/pi
-    copy=no
-
-- name: check exist libpafe library
-  stat: path=/usr/local/lib/libpafe.so.0.0.8
-  register: libpafe_so
+  unarchive:
+    src: "/home/pi/libpafe-{{ libpafe_ver }}.tar.gz"
+    dest: /home/pi
+    copy: no
 
 - name: configure libpafe
-  command: ./configure chdir=/home/pi/libpafe-0.0.8
-  when: not libpafe_so.stat.exists
+  command: ./configure 
+  args:
+    chdir: "/home/pi/libpafe-{{ libpafe_ver }}"
+    creates: "{{ libpafe_so }}"
 
 - name: make libpafe
-  command: make chdir=/home/pi/libpafe-0.0.8
-  when: not libpafe_so.stat.exists
+  command: make
+  args:
+    chdir: "/home/pi/libpafe-{{ libpafe_ver }}"
+    creates: "{{ libpafe_so }}"
 
 - name: install libpafe
-  command: make install chdir=/home/pi/libpafe-0.0.8
-  when: not libpafe_so.stat.exists
+  command: make install
+  args:
+    chdir: "/home/pi/libpafe-{{ libpafe_ver }}"
+    creates: "{{ libpafe_so }}"
   notify: run ldconfig
   become: yes
 
 - name: copy udev rule for libpafe
   copy:
-    src=60-libpafe.rules
-    dest=/etc/udev/rules.d
+    src: 60-libpafe.rules
+    dest: /etc/udev/rules.d
   notify: reload udev
   become: yes
 
 - name: download libpafe-ruby
-  get_url: >
-    url=http://homepage3.nifty.com/slokar/pasori/libpafe-ruby-0.0.8.tar.gz
-    dest=/home/pi/
+  get_url:
+    url: "{{ libpafe_url }}/libpafe-ruby-{{ libpafe_ruby_ver }}.tar.gz"
+    dest: /home/pi
 
 - name: unarchive libpafe-ruby
   unarchive: >
-    src=/home/pi/libpafe-ruby-0.0.8.tar.gz
+    src="/home/pi/libpafe-ruby-{{ libpafe_ruby_ver }}.tar.gz"
     dest=/home/pi
     copy=no
 
-- name: check exist libpafe-ruby module
-  stat: path=/usr/local/lib/site_ruby/arm-linux-eabihf/pasori.so
-  register: pasori_so
-
 - name: ruby extconf.rb
-  command: ruby extconf.rb chdir=/home/pi/libpafe-ruby
-  when: not pasori_so.stat.exists
+  command: ruby extconf.rb
+  args:
+    chdir: /home/pi/libpafe-ruby
+    creates: "{{ pasori_so }}"
 
 - name: make libpafe-ruby
-  command: make chdir=/home/pi/libpafe-ruby
-  when: not pasori_so.stat.exists
+  command: make
+  args:
+    chdir: /home/pi/libpafe-ruby
+    creates: "{{ pasori_so }}"
 
 - name: install libpafe-ruby
-  command: make install chdir=/home/pi/libpafe-ruby
-  when: not pasori_so.stat.exists
+  command: make install
+  args:
+    chdir: /home/pi/libpafe-ruby
+    creates: "{{ pasori_so }}"
   become: yes
 
 - name: copy lcd-icreader.rb
-  copy: >
-    src=lcd-icreader.rb
-    dest=/home/pi/
+  copy:
+    src: lcd-icreader.rb
+    dest: /home/pi/
 
 - name: set autostart lcd-icreader.rb
-  lineinfile: >
-    dest=/etc/rc.local
-    insertbefore="exit 0"
-    line="become /usr/bin/ruby /home/pi/lcd-icreader.rb &"
+  lineinfile:
+    dest: /etc/rc.local
+    insertbefore: "exit 0"
+    line: "become /usr/bin/ruby /home/pi/lcd-icreader.rb &"
   become: yes

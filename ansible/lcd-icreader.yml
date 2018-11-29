@@ -1,4 +1,5 @@
 ---
 - hosts: lcd-icreader
+  gather_facts: no
   roles:
   - lcd-icreader
