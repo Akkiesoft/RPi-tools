@@ -114,11 +114,13 @@ begin
     system = felica.request_system()
     card = {}
     system.each {|s|
-      if (s == Felica::POLLING_SUICA || s == -31065 || s == -32546 || s == -31138 || s == -30261)
+      if (s == Felica::POLLING_SUICA || s == -31065 || s == -32546 || s == -31138 || s == -30261 || s== -31342)
         # Suica (Generic traffic IC card) balance
         felica.foreach(Felica::SERVICE_SUICA_HISTORY) {|l|
           data = l.unpack('CCnnCCCCvN')
           card["name"] = "Suica"
+          if (s == -31342)
+            card["name"] = "PASPY" end
           if (s == -32546)
             card["name"] = "Iruca" end
           if (s == -31138)
@@ -186,8 +188,17 @@ begin
             break
           }
         }
+      elsif (s == -32529)
+        pasori.felica_polling(Felica::POLLING_ANY) {|felica2|
+          felica2.foreach(0x898F) {|l|
+            data = l.unpack('VVVcn')
+            card["balance"] = data[4]
+            card["name"] = "ICa"
+            break
+          }
+        }
       else
-        if (s != 1223 && s != -32638 && s != -31445)
+        if (s != 1223 && s != -32638 && s != -31445 && s!= -31342)
           card["name"] = "Unknown"
           card["balance"] = sprintf("%d(%X)", s, s)
         end
