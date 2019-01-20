@@ -1,43 +1,48 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # coding: utf-8
 
-import os
-import datetime
-from pytz import timezone
-import requests
+from datetime import datetime, timezone, timedelta
+from requests_oauthlib import OAuth1Session
 from PIL import Image
 import inkyphat
 
 path = '/home/pi/tenki/'
 fontpath = '/usr/share/fonts/truetype/'
-location = 'Yokohama-shi, JP'
+location = 'Yokohama-shi,JP'
 
-# Comment out only V1
-# inkyphat.set_colour('red') 
-inkyphat.set_border(inkyphat.BLACK)
-inkyphat.set_image(Image.open(path+"tenki-base.png"))
+# https://developer.yahoo.com/weather/
+CONSUMER_KEY = ''
+CONSUMER_SECRET = ''
 
-now = datetime.datetime.now()
 
-baseurl = "https://query.yahooapis.com/v1/public/yql"
-yql_query = {
-  'q': 'select * from weather.forecast where woeid in (select woeid from geo.places(1) where text="' + location + '") and u="c"',
+# -------------------------
+#  Get weather from Yahoo!
+# -------------------------
+
+y = OAuth1Session(CONSUMER_KEY, client_secret=CONSUMER_SECRET)
+baseurl = "https://weather-ydn-yql.media.yahoo.com/forecastrss"
+q = {
+  'location': location,
+  'u': 'c',
   'format': 'json'
 }
-r = requests.get(baseurl, params = yql_query)
+r = y.get(baseurl, params = q)
 data = r.json()
 
 # 夜の回は明日の天気を出したい
+now = datetime.now()
 if (now.hour >= 22):
   title = u"あしたのてんき"
-  w = data['query']['results']['channel']['item']['forecast'][1]
+  w = data['forecasts'][1]
 else:
   title = u"きょうのてんき"
-  w = data['query']['results']['channel']['item']['forecast'][0]
+  w = data['forecasts'][0]
 
 temp_max = u"%s℃" % (w['high'])
 temp_min = u"   /%s℃" % (w['low'])
-forcast_date_str = w['date']
+JST = timezone(timedelta(hours=+9), 'JST')
+d = datetime.fromtimestamp(w['date'], JST)
+forcast_date_str = d.strftime("%Y/%m/%d")
 
 # https://developer.yahoo.com/weather/documentation.html#codes
 # 多すぎて全部書けないのでざっくりまとめる
@@ -59,6 +64,15 @@ if weather_code in [5, 7, 13, 14, 15, 16, 18, 41, 42, 43, 46, 17, 35]:
 #if weather_code in [0, 1, 2, 23, 24]:
 #  status = 'wind'
 
+
+# -------------------------
+#  Draw to Inky pHAT
+# -------------------------
+
+# Comment out only V1
+# inkyphat.set_colour('red') 
+inkyphat.set_border(inkyphat.BLACK)
+inkyphat.set_image(Image.open(path + "tenki-base.png"))
 status_img = Image.open(path + status + ".png")
 inkyphat.paste(status_img, box=(0, 26))
 
@@ -69,7 +83,7 @@ inkyphat.text((10, 75), temp_max, 2, font=font)
 inkyphat.text((10, 75), temp_min, 0, font=font)
 
 font2 = inkyphat.ImageFont.truetype(fontpath + "x8y12pxTheStrongGamer.ttf", 12)
-inkyphat.text((110, -3), location.split(', ')[0], 0, font=font2)
+inkyphat.text((110, -3), location.split(',')[0], 0, font=font2)
 inkyphat.text((110, 8), forcast_date_str, 0, font=font2)
 
 inkyphat.show()
