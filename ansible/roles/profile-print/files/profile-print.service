@@ -5,7 +5,7 @@ Wants=network-online.target
 After=network-online.target
 
 [Service]
-ExecStart = /usr/bin/python3 /home/pi/profile_print.py
+ExecStart = /usr/bin/python3 /home/pi/profile_print/profile_print_tw.py
 Restart = always
 Type = simple
 

@@ -23,8 +23,8 @@
 
 - name: copy profile_print script
   copy: >
-    src=profile_print.py
-    dest=/home/pi/profile_print.py
+    src=profile_print
+    dest=/home/pi/profile_print
     mode=0755
 
 - name: enable service
