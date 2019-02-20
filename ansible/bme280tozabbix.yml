@@ -1,5 +1,5 @@
 ---
-- hosts: all
+- hosts: bme280tozabbix
   gather_facts: no
   roles:
   - bme280tozabbix
