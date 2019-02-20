@@ -19,9 +19,12 @@ fi
 # if slide exists then culculation md5sum.
 if [ -e $SLIDEFILE ] ; then
   SLIDEHASH=`md5sum $SLIDEFILE | awk -F' ' '{print $1}'`
+else
+  echo "$SLIDEFILE does not exist!"
+  exit 1
 fi
 
-# if slideimage directory does not exists then create it.
+# if slideimage directory does not exist then create it.
 if [ ! -e $SLIDESTORE ] ; then
   mkdir -p $SLIDESTORE
 fi
@@ -30,7 +33,7 @@ SLIDEIMG=$SLIDESTORE/$SLIDEHASH
 
 DO_CONVERT=0
 if [ ! -e $SLIDEIMG ] ; then
-  # if slide image does not exists then do convert.
+  # if slide image does not exist then do convert.
   mkdir -p $SLIDEIMG
   DO_CONVERT=1
 else
