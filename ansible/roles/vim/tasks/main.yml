@@ -1,3 +1,11 @@
+- set_fact: 
+    vim_ver: vim80
+  when: ansible_distribution_release == "stretch"
+
+- set_fact: 
+    vim_ver: vim81
+  when: ansible_distribution_release == "buster"
+
 - name: install vim
   apt:
     name: vim
@@ -6,21 +14,21 @@
 
 - name: disable mouse
   replace:
-    path: /usr/share/vim/vim80/defaults.vim
+    path: "/usr/share/vim/{{ vim_ver }}/defaults.vim"
     regexp: '^  set mouse=a'
     replace: '"  set mouse=a'
   become: yes
 
 - name: disable auto indent
   replace:
-    path: /usr/share/vim/vim80/defaults.vim
+    path: "/usr/share/vim/{{ vim_ver }}/defaults.vim"
     regexp: "filetype plugin indent on"
     replace: "filetype plugin indent off"
   become: yes
 
 - name: disable scrolloff
   replace:
-    path: /usr/share/vim/vim80/defaults.vim
+    path: "/usr/share/vim/{{ vim_ver }}/defaults.vim"
     regexp: "scrolloff=5"
     replace: "scrolloff=0"
   become: yes
