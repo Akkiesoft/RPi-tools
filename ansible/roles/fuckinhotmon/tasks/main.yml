@@ -1,11 +1,11 @@
 - name: install packages
   apt:
-    name: "{{ item }}"
+    name:
+      - git
+      - python-pip
+      - python-dev
+      - python-pil
     state: present
-  with_items:
-    - python-pip
-    - python-dev
-    - python-pil
   become: yes
 
 - name: clone Adafruit_Nokia_LCD
