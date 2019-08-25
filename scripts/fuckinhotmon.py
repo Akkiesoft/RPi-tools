@@ -129,7 +129,7 @@ while True:
 
     if zbx_temp >= threshold_hot or room_temp >= threshold_hot:
       lcd = fuckinhot
-    elif zbx_temp < threshold_cold or room_temp < threshold_cold:
+    elif room_temp < threshold_cold:
       lcd = samui
     else:
       lcd = normal
