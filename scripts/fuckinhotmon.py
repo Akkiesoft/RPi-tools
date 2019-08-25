@@ -21,6 +21,7 @@ else:
   print('USAGE: %s <config file>' % sys.argv[0])
   sys.exit(1)
 
+zbx = {}
 # Read config file
 try:
   conf = ConfigParser.ConfigParser()
@@ -40,8 +41,7 @@ try:
   pic_samui = conf.get('theme', 'samui')
 
   # zabbix
-  if (conf.getboolean('zabbix', 'enabled')):
-    zbx = dict(conf.items('zabbix'))
+  zbx['enabled'] = conf.getboolean('zabbix', 'enabled')
 except Exception as e:
   print("Could not read config file.: %s" % e)
   sys.exit(1)
