@@ -21,8 +21,8 @@ else:
   print('USAGE: %s <config file>' % sys.argv[0])
   sys.exit(1)
 
-zbx = {}
 # Read config file
+zbx = { 'failed': False }
 try:
   conf = ConfigParser.ConfigParser()
   conf.read(conf_file)
@@ -75,6 +75,7 @@ def read_temp():
 
 
 # dummy
+zbxretry = 0
 zbx_temp = 25
 room_temp = 25
 
@@ -89,7 +90,7 @@ if zbx['enabled']:
     z = ZabbixAPI(url=zbx['url'], user=zbx['user'], password=zbx['pass'])
   except urllib2.URLError:
     zbx['enabled'] = False
-
+    zbx['failed'] = True
 
 # make sure zabbix or ds18b20 is enabled
 if not zbx['enabled'] and ds18b20 == "":
@@ -118,7 +119,7 @@ disp.begin(contrast=60)
 while True:
   try:
     # zabbix temp
-    if zbx['enabled']:
+    if zbx['enabled'] and not zbx['failed']:
       t = z.item.get(itemids=(zbx['itemid']))
       zbx_temp = round(float(t[0]["lastvalue"]), 2)
 
@@ -134,7 +135,7 @@ while True:
       lcd = normal
     draw = ImageDraw.Draw(lcd)
 
-    if zbx['enabled']:
+    if zbx['enabled'] and not zbx['failed']:
       draw.rectangle((48,0,84,8), outline=255, fill=255)
       draw.text((48,0), '%05s' % (zbx_temp) + '  C', font=font)
 
@@ -149,6 +150,16 @@ while True:
     disp.image(lcd)
     disp.display()
     time.sleep(10.0)
+
+    if zbx['enabled'] and zbx['failed']:
+      zbxretry += 1
+      if not zbxretry % 6:
+        try:
+          z = ZabbixAPI(url=zbx['url'], user=zbx['user'], password=zbx['pass'])
+          zbx['enabled'] = True
+          zbx['failed'] = False
+        except urllib2.URLError:
+          pass
 
   except KeyboardInterrupt:
     disp.clear()
