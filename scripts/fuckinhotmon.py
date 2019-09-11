@@ -41,7 +41,8 @@ try:
   pic_samui = conf.get('theme', 'samui')
 
   # zabbix
-  zbx['enabled'] = conf.getboolean('zabbix', 'enabled')
+  if (conf.getboolean('zabbix', 'enabled')):
+    zbx = dict(conf.items('zabbix'))
 except Exception as e:
   print("Could not read config file.: %s" % e)
   sys.exit(1)
