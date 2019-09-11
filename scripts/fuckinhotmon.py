@@ -22,7 +22,7 @@ else:
   sys.exit(1)
 
 # Read config file
-zbx = { 'failed': False }
+zbx = {}
 try:
   conf = ConfigParser.ConfigParser()
   conf.read(conf_file)
@@ -43,9 +43,12 @@ try:
   # zabbix
   if (conf.getboolean('zabbix', 'enabled')):
     zbx = dict(conf.items('zabbix'))
+  zbx['enabled'] = conf.getboolean('zabbix', 'enabled')
 except Exception as e:
   print("Could not read config file.: %s" % e)
   sys.exit(1)
+
+zbx['failed'] = False
 
 # exit if caught the SIGTERM
 def sigterm_handler(signal_number, stack_frame):
