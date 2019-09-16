@@ -1,0 +1,13 @@
+[Unit]
+Description = CCS811 CO2 sensor web daemon
+Requires=network-online.target
+Wants=network-online.target
+After=network-online.target
+
+[Service]
+ExecStart = /usr/bin/python /home/pi/ccs811.py
+Restart = always
+Type = simple
+
+[Install]
+WantedBy = multi-user.target

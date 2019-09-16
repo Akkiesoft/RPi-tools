@@ -1,0 +1,50 @@
+- name: install required packages
+  apt:
+    name:
+      - git
+      - python-pip
+      - python-dev
+      - python-smbus
+    state: present
+  become: yes
+
+- name: enable i2c
+  command: /usr/bin/raspi-config nonint do_i2c 0
+  become: yes
+
+- set_fact:
+    libraries:
+      - Adafruit_Python_GPIO
+      - Adafruit_CCS811_python
+
+- name: download adafruit libraries
+  git:
+    repo: "https://github.com/adafruit/{{ item }}"
+    dest: /home/pi
+    clone: no
+  with_items: "{{ libraries }}"
+
+- name: setup adafruit libraries
+  command: python setup.py install
+  args:
+    chdir: "/home/pi/{{ item }}"
+  with_items: "{{ libraries }}"
+  become: yes
+
+- name: copy script
+  copy:
+    src: ccs811.py
+    dest: /home/pi
+
+- name: copy service file
+  copy:
+    src: ccs811.service
+    dest: /etc/systemd/system/ccs811.service
+  become: yes
+
+- name: enable and start service
+  systemd:
+    name: ccs811
+    enabled: yes
+    state: started
+  become: yes

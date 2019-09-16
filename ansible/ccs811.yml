@@ -1,0 +1,5 @@
+- name: CCS811 CO2 sensor
+  hosts: ccs811
+  gather_facts: no
+  roles:
+   - ccs811
