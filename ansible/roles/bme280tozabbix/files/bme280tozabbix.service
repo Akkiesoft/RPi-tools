@@ -3,7 +3,7 @@ Description=get temperature/humidity/pressure by bme280 and send to zabbix
 
 [Service]
 Type=oneshot
-ExecStart=/usr/bin/python /home/pi/bme280tozabbix.py
+ExecStart=/usr/bin/python3 /home/pi/bme280tozabbix.py
 
 [Install]
 WantedBy=default.target

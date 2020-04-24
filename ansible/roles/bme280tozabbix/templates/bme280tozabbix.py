@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 # sudo apt install -y python-pip python-smbus
 # sudo pip install rpi.bme280 py-zabbix

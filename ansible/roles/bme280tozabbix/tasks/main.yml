@@ -6,8 +6,8 @@
   apt:
     name:
     - i2c-tools
-    - python-pip
-    - python-smbus
+    - python3-pip
+    - python3-smbus
     - zabbix-agent
     state: present
   become: yes
@@ -36,10 +36,13 @@
   - timer
   become: yes
 
-- name: enable bme280tozabbix.timer
+- name: enable bme280tozabbix.timer and service
   systemd:
-    name: bme280tozabbix.timer
+    name: bme280tozabbix.{{ item }}
     state: started
     enabled: yes
     daemon_reload: yes
+  with_items:
+  - service
+  - timer
   become: yes
