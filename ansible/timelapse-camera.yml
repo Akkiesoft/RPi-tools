@@ -1,4 +1,5 @@
 ---
-- hosts: timelapse-camera
+- hosts: timelapse_camera
+  gather_facts: no
   roles:
   - timelapse-camera
