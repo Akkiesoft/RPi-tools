@@ -1,4 +1,5 @@
 ---
 - hosts: japan-weather
   roles:
+  - enable-i2c
   - japan-weather

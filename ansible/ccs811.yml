@@ -2,4 +2,5 @@
   hosts: ccs811
   gather_facts: no
   roles:
-   - ccs811
+  - enable-i2c
+  - ccs811

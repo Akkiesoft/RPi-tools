@@ -26,10 +26,6 @@
     state: present
   become: yes
 
-- name: enable i2c
-  command: raspi-config nonint do_i2c 0
-  become: yes
-
 - name: download libpafe
   get_url:
     url: "{{ libpafe_url }}/libpafe-{{ libpafe_ver }}.tar.gz"

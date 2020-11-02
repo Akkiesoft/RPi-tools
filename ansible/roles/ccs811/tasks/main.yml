@@ -8,10 +8,6 @@
     state: present
   become: yes
 
-- name: enable i2c
-  command: /usr/bin/raspi-config nonint do_i2c 0
-  become: yes
-
 - set_fact:
     libraries:
       - Adafruit_Python_GPIO

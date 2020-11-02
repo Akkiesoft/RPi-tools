@@ -2,4 +2,5 @@
 - hosts: timelapse_camera
   gather_facts: no
   roles:
+  - enable-i2c
   - timelapse-camera

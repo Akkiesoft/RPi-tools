@@ -2,4 +2,5 @@
 - hosts: bme280tozabbix
   gather_facts: no
   roles:
+  - enable-i2c
   - bme280tozabbix

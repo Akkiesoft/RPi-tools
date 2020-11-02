@@ -2,5 +2,6 @@
 - hosts: oled-ssd1306-samples
   gather_facts: no
   roles:
+  - enable-i2c
   - oled-ssd1306
   - oled-ssd1306-samples

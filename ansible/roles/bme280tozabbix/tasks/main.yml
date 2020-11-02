@@ -1,7 +1,3 @@
-- name: enable i2c
-  command: raspi-config nonint do_i2c 0
-  become: yes
-
 - name: install packages
   apt:
     name:
