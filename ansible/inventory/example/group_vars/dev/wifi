@@ -1,0 +1,7 @@
+---
+
+# for Wi-Fi role
+wifi:
+  - type: wpa-psk
+    ssid: mydevwifi
+    pass: mydevwifipass

@@ -5,3 +5,8 @@ wifi:
   - type: wpa-psk
     ssid: mywifi
     pass: mywifipass
+
+wifi_old:
+  - type: wpa-psk
+    ssid: myoldwifi
+    pass: myoldwifipass

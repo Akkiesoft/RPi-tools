@@ -1,5 +1,15 @@
 [all]
 raspberrypi.local
 
+[home]
+raspberrypi.local
+
+[dev]
+develop.local
+
+[wifi:children]
+home
+dev
+
 [all:vars]
 ansible_user=pi

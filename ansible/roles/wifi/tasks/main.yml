@@ -1,10 +1,17 @@
 - name: copy wi-fi configuration
   template:
     src: wifi.j2
-    dest: /etc/NetworkManager/system-connections/{{ item.ssid }}
+    dest: "/etc/NetworkManager/system-connections/{{ item.ssid }}"
     mode: 0600
     owner: root
     group: root
-  with_items: "{{wifi}}"
+  loop: "{{ wifi }}"
   notify: restart network-manager
+  become: yes
+
+- name: remove old wi-fi config
+  file:
+    path: "/etc/NetworkManager/system-connections/{{ item }}"
+    state: absent
+  loop: "{{ wifi_old }}"
   become: yes
