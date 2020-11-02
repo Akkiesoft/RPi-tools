@@ -1,10 +1,10 @@
 - name: install debian packages
   apt:
     name:
-    - python-pip
-    - python-dev
+    - python3-pip
+    - python3-dev
     - sense-hat
-    - python-pil
+    - python3-pil
     state: present
   become: yes
 
