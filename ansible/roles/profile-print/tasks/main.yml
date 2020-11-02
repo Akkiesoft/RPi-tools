@@ -4,12 +4,15 @@
       - cups
       - python3-minimal
       - python3-pip
+      - python3-rpi.gpio
     state: present
   become: yes
 
 - name: install escpos
   pip:
-    name: python-escpos
+    name:
+    - python-escpos
+    - Mastodon.py
     state: present
     executable: /usr/bin/pip3
   become: yes
@@ -23,10 +26,10 @@
 - name: copy profile_print script
   copy:
     src: profile_print
-    dest: /home/pi/profile_print
+    dest: /home/pi/
     mode: 0755
 
-- name: enable service
+- name: enable and start service
   systemd:
     name: "profile-print"
     daemon-reload: yes
