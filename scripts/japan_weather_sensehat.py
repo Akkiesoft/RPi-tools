@@ -4,6 +4,7 @@ import time
 import pyowm
 
 owm = pyowm.OWM('{{ your_api_key }}')
+mgr = owm.weather_manager()
 SH = SenseHat()
 
 map = {
@@ -39,13 +40,12 @@ map = {
 }
 
 def get_wether(owm, i):
-  weather = owm.weather_at_place(i + ',JP')
-  w = weather.get_weather()
-  w_main = w.get_status()
-  if w_main == "Clear": return (64,48,0)
-  if w_main == "Clouds": return (48,48,48)
-  if w_main == "Rain": return (0,0,64)
-  if w_main == "Snow": return (0,64,64)
+  weather = mgr.weather_at_place(i + ',JP')
+  w = weather.weather.status
+  if w == "Clear": return (64,48,0)
+  if w == "Clouds": return (48,48,48)
+  if w == "Rain" or w == "Mist": return (0,0,64)
+  if w == "Snow": return (0,64,64)
   return (0,64,0)
 
 for i in map:
@@ -55,6 +55,9 @@ for i in map:
 time.sleep(3)
 
 for i in map:
+  for x,y in map[i]:
+    r,g,b = (0,96,0)
+    SH.set_pixel(x,y,r,g,b)
   weather_status = get_wether(owm, i)
   for x,y in map[i]:
     r,g,b = weather_status
