@@ -1,0 +1,114 @@
+- name: optimize raspberry pi power usage
+  hosts: optimize-pi-power
+  gather_facts: no
+  vars:
+    state: ['absent', 'present']
+  tasks:
+    - name: detect raspberry pi model
+      slurp:
+        src: /sys/firmware/devicetree/base/model
+      register: model_b64
+    - set_fact:
+        model: "{{ model_b64['content'] | b64decode }}"
+    - name: Raspberry Pi model is
+      debug: var=model
+
+    - name: disable HDMI
+      blockinfile:
+        path: /etc/rc.local
+        block: |
+          # To re-enable it, comment-out below line and reboot.
+          /opt/vc/bin/tvservice -o
+        marker: "# {mark} Disable HDMI"
+        insertbefore: 'exit 0'
+        state: "{{ state[disable_hdmi] | default('absent') }}"
+      become: yes
+      notify: switch HDMI service now
+
+    - name: disable wi-fi
+      lineinfile:
+        path: /boot/config.txt
+        line: "dtoverlay=disable-wifi"
+        insertafter: '[all]'
+        state: "{{ state[disable_wifi] | default('absent') }}"
+      become: yes
+      notify: reboot is required
+
+    - name: disable bluetooth
+      lineinfile:
+        path: /boot/config.txt
+        line: "dtoverlay=disable-bt"
+        insertafter: '[all]'
+        state: "{{ state[disable_bluetooth] | default('absent') }}"
+      become: yes
+      notify: reboot is required
+
+    - name: disable act led
+      blockinfile:
+        path: /boot/config.txt
+        block: |
+          dtparam=act_led_trigger=none
+          {% if "Pi 3" in model or "Pi 4" in model %}
+          dtoverlay=act-led activelow=off
+          {% else %}
+          dtparam=act_led_activelow=off
+          {% endif %}
+        marker: "# {mark} Disable act LED"
+        insertafter: '[all]'
+        state: "{{ state[disable_led_act] | default('absent') }}"
+      become: yes
+      notify: reboot is required
+
+    - name: disable power led
+      blockinfile:
+        path: /boot/config.txt
+        block: |
+          dtparam=pwr_led_trigger=none
+          dtparam=pwr_led_activelow=off
+        marker: "# {mark} Disable power LED"
+        insertafter: '[all]'
+        state: "{{ state[disable_led_power] | default('absent') }}"
+      become: yes
+      notify: reboot is required
+
+    - name: disable ethernet led for Model B
+      blockinfile:
+        path: /boot/config.txt
+        block: |
+          [pi3+]
+          dtparam=eth_led0=14
+          dtparam=eth_led1=14
+          [pi4]
+          dtparam=eth_led0=4
+          dtparam=eth_led1=4
+          [all]
+          
+        marker: "# {mark} Disable ethernet port LEDs"
+        insertbefore: '[all]'
+        state: "{{ state[disable_led_ethernet] | default('absent') }}"
+      become: yes
+      when: "'Model B' in model"
+      notify: reboot is required
+
+    - name: disable usb controller
+      blockinfile:
+        path: /etc/rc.local
+        block: |
+          {% if 'Raspberry Pi 4' in model %}
+          # To re-enable it, comment-out below line and reboot.
+          sleep {{ disable_usb_controller_delay | default(300) }} ; echo 1 > /sys/bus/pci/devices/0000\:01\:00.0/remove
+          {% else %}
+          # Or write "1-1" to /sys/bus/usb/drivers/usb/bind.
+          sleep {{ disable_usb_controller_delay | default(300) }} ; echo '1-1' > /sys/bus/usb/drivers/usb/unbind
+          {% endif %}
+        marker: "# {mark} Disable USB controller"
+        insertbefore: 'exit 0'
+        state: "{{ state[disable_usb_controller] | default('absent') }}"
+      become: yes
+      when: "'Model B' in model"
+
+  handlers:
+    - name: switch HDMI service now
+      command: /opt/vc/bin/tvservice {{ ['-p', '-o'][disable_hdmi] }}
+    - name: reboot is required
+      debug: msg="Reboot is required."

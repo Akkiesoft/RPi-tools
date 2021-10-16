@@ -1,0 +1,25 @@
+# HDMIの無効化 (All model)
+# 30mAくらい減る
+disable_hdmi: no
+
+# ACT・電源のLEDを消灯 (1B+/1A+以降,Zeroはactのみ)
+# 数mA減る
+disable_led_act: no
+disable_led_power: no
+
+# EthernetのLEDを消灯(Pi3 B+/Pi4 B)
+# 数mA減る
+disable_led_ethernet: no
+
+# 無線の無効化 (Pi 3以降、Zero W)
+# セットで落とすと40mAくらい減るらしい
+disable_wifi: no
+disable_bluetooth: no
+
+# USBコントローラーの無効化 (Model B)
+# ※1B〜3B+はLANごと使用不可になるので注意！
+# 1B〜3B: 140mAくらい減る (LAN9514)
+# 3B+: 220mAくらい減る (LAN7515)
+disable_usb_controller: no
+# 起動後に無効化されるまでの時間(秒.デフォルトは300)
+disable_usb_controller_delay: 300
