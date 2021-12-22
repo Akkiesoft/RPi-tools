@@ -6,8 +6,14 @@
     vim_ver: vim81
   when: ansible_distribution_release == "buster"
 
+- set_fact: 
+    vim_ver: vim82
+  when: ansible_distribution_release == "bullseye"
+
 - name: install vim
   apt:
+    update_cache: yes
+    cache_valid_time: 7200
     name: vim
     state: present
   become: yes
@@ -15,8 +21,8 @@
 - name: disable mouse
   replace:
     path: "/usr/share/vim/{{ vim_ver }}/defaults.vim"
-    regexp: '^  set mouse=a'
-    replace: '"  set mouse=a'
+    regexp: '^([ ]+)set mouse=a'
+    replace: '"\1set mouse=a'
   become: yes
 
 - name: disable auto indent
