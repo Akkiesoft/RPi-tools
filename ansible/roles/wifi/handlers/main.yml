@@ -1,3 +1,13 @@
 - name: restart network-manager
-  action: service name=network-manager state=restarted
+  systemd:
+    name: network-manager
+    state: restarted
+  when: ansible.distribution_major_version|int <= 10
+  become: yes
+
+- name: restart NetworkManager
+  systemd:
+    name: NetworkManager
+    state: restarted
+  when: ansible.distribution_major_version|int >= 11
   become: yes

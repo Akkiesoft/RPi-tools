@@ -1,5 +1,4 @@
 ---
 - hosts: wifi
-  gather_facts: no
   roles:
   - wifi
