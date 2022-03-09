@@ -1,0 +1,5 @@
+---
+- hosts: tenki
+  gather_facts: no
+  roles:
+  - tenki
