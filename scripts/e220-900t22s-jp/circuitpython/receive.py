@@ -26,18 +26,21 @@ payload = bytes()
 while True:
     now = time.localtime()
     now_str = "{:02}:{:02}:{:02}".format(now.tm_hour, now.tm_min, now.tm_sec)
+    display.fill_rect(0, 0, 127, 8, 0)
+    display.text("NOW: %s"%now_str, 0, 0, 1)
     if uart.in_waiting:
         payload = payload + uart.read(uart.in_waiting)
     else:
         if len(payload) < 1:
+            time.sleep(0.01)
+            display.show()
             continue
-        display.fill_rect(0, 0, 127, 30, 0)
-        display.text('DATA: %s'%payload, 0, 0, 1)
+        display.fill_rect(0, 10, 127, 30, 0)
+        display.text("RECEIVED: %s"%now_str, 0, 10, 1)
+        data = payload.split(b'\n')[0].decode('utf-8')
+        display.text('DATA: %s'%data, 0, 20, 1)
         if show_rssi:
             rssi = int(payload[-1]) - 256
-            display.text(f"RSSI: {rssi} dBm", 0, 10, 1)
-        display.text("RECEIVED: %s"%now_str, 0, 20, 1)
+            display.text(f"RSSI: {rssi} dBm", 0, 30, 1)
+        display.show()
         payload = bytes()
-    display.fill_rect(0, 30, 127, 8, 0)
-    display.text("NOW: %s"%now_str, 0, 30, 1)
-    display.show()
