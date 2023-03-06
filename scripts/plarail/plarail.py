@@ -1,8 +1,14 @@
 #!/usr/bin/env python3
 # coding: utf-8
 
-# camera web streaming:
-# https://picamera.readthedocs.io/en/latest/recipes2.html#web-streaming
+# RPi Plarail
+# Copyright (C) 2019-2023 Akkiesoft
+# MIT License
+# https://akkiesoft.hatenablog.jp/entry/20190220/1550669689
+
+# The web streaming code for the camera was taken from:
+#   https://picamera.readthedocs.io/en/latest/recipes2.html#web-streaming
+# The original code is licensed under the BSD License.
 
 import os
 import io
