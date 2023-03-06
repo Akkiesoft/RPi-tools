@@ -39,10 +39,12 @@ body { background: #777777; width: 100%; font-family: sans-serif; }
 	background: #000000;
     margin-top: -78px;
 }
+#dir { width:80px; }
+.center { text-align: center; }
 </style>
 </head>
 <body>
-<div><img src="/stream.mjpg"></div>
+<div class="center"><img src="/stream.mjpg"></div>
 <div class="mascon">
   <div class="controller"><input id="cont" type="range" orient="vertical" value="5" min="0" max="9" step="1" onchange="updatespeed()" /><br></div>
   <div class="label">
@@ -59,6 +61,9 @@ body { background: #777777; width: 100%; font-family: sans-serif; }
   </div>
 <span id="contvalue">-</span>
 </div>
+<div class="center">
+前 <input id="dir" type="range" value="0" min="0" max="1" step="1" onchange="updatedir()" /> 後
+</div>
 <br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
 </body>
 
@@ -72,9 +77,18 @@ body { background: #777777; width: 100%; font-family: sans-serif; }
     }
   }
   elem.addEventListener('input', rangeValue(elem, target));
-  function updatespeed() {
-    var elem = document.getElementById('cont');
-    var result = fetch('/'+com[elem.value], { method: 'GET' });
+
+function updatespeed() {
+  var elem = document.getElementById('cont');
+  var result = fetch('/'+com[elem.value], { method: 'GET' });
+}
+function updatedir() {
+  if (document.getElementById('dir').value == 1) {
+    fetch('/BK', { method: 'GET' })
+  } else {
+    fetch('/FW', { method: 'GET' })
   }
+}
+
 </script>
 </html>

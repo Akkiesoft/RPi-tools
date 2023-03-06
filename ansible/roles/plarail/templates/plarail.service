@@ -1,0 +1,14 @@
+[Unit]
+Description = Plarail controller server
+Requires=network-online.target
+Wants=network-online.target
+After=network-online.target
+
+[Service]
+ExecStart = /usr/bin/python3 {{ install_dir }}/plarail.py
+Restart = always
+Type = simple
+
+[Install]
+WantedBy = multi-user.target
+

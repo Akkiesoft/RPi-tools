@@ -1,0 +1,35 @@
+- name: install packages
+  apt:
+    name:
+      - python3
+      - python3-picamera
+      - python3-rpi.gpio
+    state: present
+  become: yes
+
+- name: create install directory
+  file:
+    path: "{{ install_dir }}"
+    state: directory
+
+- name: copy script
+  copy:
+    src: "{{ item }}"
+    dest: "{{ install_dir }}"
+    mode: 0755
+  with_items:
+    - plarail.py
+    - mascon.html
+
+- name: copy plarail.service
+  template:
+    src: plarail.service
+    dest: /etc/systemd/system/plarail.service
+  become: yes
+
+- name: enable plarail.service
+  systemd:
+    name: plarail.service
+    enabled: yes
+    state: restarted
+  become: yes

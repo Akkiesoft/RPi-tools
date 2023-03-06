@@ -26,7 +26,9 @@ chan_list = [24,23]
 GPIO.setup(chan_list, GPIO.OUT)
 
 freq=220
-pwm = GPIO.PWM(24, freq)
+pwm_fw = GPIO.PWM(24, freq)
+pwm_bk = GPIO.PWM(23, freq)
+pwm = pwm_fw
 
 B_MIN_SPEED = 12
 P_MIN_SPEED = 18
@@ -123,12 +125,20 @@ pwmstat = 0
 
 class Handler(server.BaseHTTPRequestHandler):
   def do_GET(self):
-    global pwmstat, html
+    global pwm, pwmstat, html
     logging.info("[Plarail] access: " + self.path)
     code = 200
     body = b"ok"
     if self.path == "/":
       body = bytes(html, 'UTF-8')
+    elif self.path == "/FW":
+      pwm.stop()
+      pwmstat = 0
+      pwm = pwm_fw
+    elif self.path == "/BK":
+      pwm.stop()
+      pwmstat = 0
+      pwm = pwm_bk
     elif self.path == "/EB":
       pwm.stop()
       pwmstat = 0
@@ -194,8 +204,8 @@ class StreamingServer(socketserver.ThreadingMixIn, server.HTTPServer):
 with picamera.PiCamera(resolution='320x240', framerate=24) as camera:
   output = StreamingOutput()
   #Uncomment the next line to change your Pi's Camera rotation (in degrees)
-  #camera.rotation = 90
-  camera.rotation = 180
+  camera.rotation = 90
+  #camera.rotation = 180
   camera.start_recording(output, format='mjpeg')
   try:
     address = ('', 8000)

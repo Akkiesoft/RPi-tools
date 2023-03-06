@@ -8,7 +8,7 @@
   get_url:
     url: "{{ item }}"
     dest: /usr/share/fonts/truetype/
-  with_items:
+  loop:
   - http://www17.plala.or.jp/xxxxxxx/00ff/x14y24pxHeadUpDaisy.ttf
   - http://www17.plala.or.jp/xxxxxxx/00ff/x8y12pxTheStrongGamer.ttf
   become: yes
@@ -22,7 +22,7 @@
   copy:
     src: "tenki/{{ item }}"
     dest: /home/pi/tenki
-  with_items:
+  loop:
   - tenki.py
   - tenki-base.png
   - sunny.png
