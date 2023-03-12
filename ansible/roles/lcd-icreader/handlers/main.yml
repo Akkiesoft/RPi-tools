@@ -5,3 +5,9 @@
 - name: reload udev
   command: udevadm control --reload-rules
   become: yes
+
+- name: restart lcd-icreader
+  systemd:
+    name: lcd-icreader
+    state: restarted
+  become: yes

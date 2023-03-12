@@ -1,1 +1,0 @@
-../../../../scripts/lcd-icreader.rb

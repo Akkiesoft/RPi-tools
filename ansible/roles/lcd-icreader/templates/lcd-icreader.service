@@ -1,0 +1,10 @@
+[Unit]
+Description = lcd-icreader
+
+[Service]
+ExecStart = /usr/bin/python3 /home/{{ ansible_user }}/lcd-icreader.py
+Restart = always
+Type = simple
+
+[Install]
+WantedBy = multi-user.target

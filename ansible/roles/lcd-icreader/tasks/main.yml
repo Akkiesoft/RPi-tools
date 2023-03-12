@@ -1,7 +1,6 @@
 - set_fact:
     libpafe_url: "http://hito.music.coocan.jp/pasori"
     libpafe_ver: 0.0.8
-    libpafe_ruby_ver: 0.0.8
 
 - set_fact:
     libpafe_so: "/usr/local/lib/libpafe.so.{{ libpafe_ver }}"
@@ -10,49 +9,40 @@
 - name: install packages
   apt:
     name:
-    - gcc
-    - libusb-1.0-0-dev
-    - ruby
-    - ruby-dev
-    - wiringpi
+      - gcc
+      - libusb-1.0-0-dev
     state: present
     update_cache: yes
     cache_valid_time: 3600
   become: yes
 
-- name: install wiringpi module
-  gem:
-    name: wiringpi
-    state: present
-  become: yes
-
 - name: download libpafe
   get_url:
     url: "{{ libpafe_url }}/libpafe-{{ libpafe_ver }}.tar.gz"
-    dest: /home/pi
+    dest: "/home/{{ ansible_user }}"
 
 - name: unarchive libpafe
   unarchive:
-    src: "/home/pi/libpafe-{{ libpafe_ver }}.tar.gz"
-    dest: /home/pi
+    src: "/home/{{ ansible_user }}/libpafe-{{ libpafe_ver }}.tar.gz"
+    dest: "/home/{{ ansible_user }}"
     copy: no
 
 - name: configure libpafe
   command: ./configure 
   args:
-    chdir: "/home/pi/libpafe-{{ libpafe_ver }}"
+    chdir: "/home/{{ ansible_user }}/libpafe-{{ libpafe_ver }}"
     creates: "{{ libpafe_so }}"
 
 - name: make libpafe
   command: make
   args:
-    chdir: "/home/pi/libpafe-{{ libpafe_ver }}"
+    chdir: "/home/{{ ansible_user }}/libpafe-{{ libpafe_ver }}"
     creates: "{{ libpafe_so }}"
 
 - name: install libpafe
   command: make install
   args:
-    chdir: "/home/pi/libpafe-{{ libpafe_ver }}"
+    chdir: "/home/{{ ansible_user }}/libpafe-{{ libpafe_ver }}"
     creates: "{{ libpafe_so }}"
   notify: run ldconfig
   become: yes
@@ -61,47 +51,34 @@
   copy:
     src: 60-libpafe.rules
     dest: /etc/udev/rules.d
+    owner: root
+    group: root
+    mode: 0644
   notify: reload udev
   become: yes
 
-- name: download libpafe-ruby
-  get_url:
-    url: "{{ libpafe_url }}/libpafe-ruby-{{ libpafe_ruby_ver }}.tar.gz"
-    dest: /home/pi
+- name: copy lcd-icreader.py
+  copy:
+    src: lcd-icreader.py
+    dest: "/home/{{ ansible_user }}"
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
+    mode: 0755
+  notify: restart lcd-icreader
 
-- name: unarchive libpafe-ruby
-  unarchive: >
-    src="/home/pi/libpafe-ruby-{{ libpafe_ruby_ver }}.tar.gz"
-    dest=/home/pi
-    copy=no
-
-- name: ruby extconf.rb
-  command: ruby extconf.rb
-  args:
-    chdir: /home/pi/libpafe-ruby
-    creates: "{{ pasori_so }}"
-
-- name: make libpafe-ruby
-  command: make
-  args:
-    chdir: /home/pi/libpafe-ruby
-    creates: "{{ pasori_so }}"
-
-- name: install libpafe-ruby
-  command: make install
-  args:
-    chdir: /home/pi/libpafe-ruby
-    creates: "{{ pasori_so }}"
+- name: copy service file
+  template:
+    src: lcd-icreader.service
+    dest: /etc/systemd/system
+    owner: root
+    group: root
+    mode: 0644
   become: yes
 
-- name: copy lcd-icreader.rb
-  copy:
-    src: lcd-icreader.rb
-    dest: /home/pi/
-
-- name: set autostart lcd-icreader.rb
-  lineinfile:
-    dest: /etc/rc.local
-    insertbefore: "exit 0"
-    line: "become /usr/bin/ruby /home/pi/lcd-icreader.rb &"
+- name: enable lcd-icreader service
+  systemd:
+    name: lcd-icreader
+    enabled: yes
+    state: started
+    daemon_reload: yes
   become: yes
