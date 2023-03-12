@@ -18,7 +18,7 @@
         path: /etc/rc.local
         block: |
           # To re-enable it, comment-out below line and reboot.
-          /opt/vc/bin/tvservice -o
+          /usr/bin/tvservice -o
         marker: "# {mark} Disable HDMI"
         insertbefore: 'exit 0'
         state: "{{ state[disable_hdmi] | default('absent') }}"
@@ -109,6 +109,6 @@
 
   handlers:
     - name: switch HDMI service now
-      command: /opt/vc/bin/tvservice {{ ['-p', '-o'][disable_hdmi] }}
+      command: /usr/bin/tvservice {{ ['-p', '-o'][disable_hdmi] }}
     - name: reboot is required
       debug: msg="Reboot is required."
