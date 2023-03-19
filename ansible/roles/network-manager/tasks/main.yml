@@ -25,3 +25,17 @@
   - src: wpa_supplicant.conf
     dest: /etc/wpa_supplicant/wpa_supplicant.conf
   become: yes
+
+- name: enable network-manager
+  systemd:
+    name: network-manager
+    enabled: yes
+  when: ansible_distribution_major_version|int <= 10
+  become: yes
+
+- name: enable NetworkManager
+  systemd:
+    name: NetworkManager
+    enabled: yes
+  when: ansible_distribution_major_version|int >= 11
+  become: yes
