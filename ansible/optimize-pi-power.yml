@@ -13,17 +13,102 @@
     - name: Raspberry Pi model is
       debug: var=model
 
-    - name: disable HDMI
-      blockinfile:
-        path: /etc/rc.local
-        block: |
-          # To re-enable it, comment-out below line and reboot.
-          /usr/bin/tvservice -o
-        marker: "# {mark} Disable HDMI"
-        insertbefore: 'exit 0'
-        state: "{{ state[disable_hdmi] | default('absent') }}"
-      become: yes
-      notify: switch HDMI service now
+    - name: detect raspberry pi os major version
+      slurp:
+        src: /etc/debian_version
+      register: os_ver_b64
+    - set_fact:
+        os_ver: "{{ (os_ver_b64['content'] | b64decode | split('.'))[0] }}"
+    - name: Raspberry Pi OS major version is
+      debug: var=os_ver
+
+    # If Raspberry Pi OS version is 11 or later.
+    - block:
+        # Perhaps it does not work, see:
+        #   https://forums.raspberrypi.com/viewtopic.php?t=350913
+        # https://github.com/raspberrypi/linux/pull/5181
+        # - name: disable HDMI
+        #   lineinfile:
+        #     path: /boot/config.txt
+        #     line: 'dtparam=hdmi=off'
+        #     state: "{{ state[disable_hdmi] | default('absent') }}"
+        #   become: yes
+        #   notify: reboot is required
+        - name: disable HDMI
+          blockinfile:
+            path: /etc/rc.local
+            block: |
+              # To re-enable it, comment-out below line and reboot.
+              DISPLAY=:0 xrandr --output HDMI-1 --off
+            marker: "# {mark} Disable HDMI"
+            insertbefore: 'exit 0'
+            state: "{{ state[disable_hdmi] | default('absent') }}"
+          become: yes
+          notify: switch HDMI by xrandr now
+
+        # (act|pwr)_led_activelow doesn't need after march 2023
+        # see: https://github.com/raspberrypi/firmware/issues/1742
+        - name: disable act led
+          lineinfile:
+            path: /boot/config.txt
+            line: dtparam=act_led_trigger=none
+            insertafter: '[all]'
+            state: "{{ state[disable_led_power] | default('absent') }}"
+          become: yes
+          notify: reboot is required
+
+        - name: disable power led
+          lineinfile:
+            path: /boot/config.txt
+            line: dtparam=pwr_led_trigger=none
+            insertafter: '[all]'
+            state: "{{ state[disable_led_power] | default('absent') }}"
+          become: yes
+          notify: reboot is required
+      when: os_ver|int >= 11
+
+    # If Raspberry Pi OS version is 10 or earlier.
+    - block:
+        - name: disable HDMI
+          blockinfile:
+            path: /etc/rc.local
+            block: |
+              # To re-enable it, comment-out below line and reboot.
+              /usr/bin/tvservice -o
+            marker: "# {mark} Disable HDMI"
+            insertbefore: 'exit 0'
+            state: "{{ state[disable_hdmi] | default('absent') }}"
+          become: yes
+          notify: switch HDMI by tvservice now
+
+        - name: disable act led
+          blockinfile:
+            path: /boot/config.txt
+            block: |
+              dtparam=act_led_trigger=none
+              {% if "Pi 3" in model or "Pi 4" in model %}
+              dtoverlay=act-led activelow=off
+              {% else %}
+              dtparam=act_led_activelow=off
+              {% endif %}
+            marker: "# {mark} Disable act LED"
+            insertafter: '[all]'
+            state: "{{ state[disable_led_act] | default('absent') }}"
+          become: yes
+          notify: reboot is required
+
+        - name: disable power led
+          blockinfile:
+            path: /boot/config.txt
+            block: |
+              dtparam=pwr_led_trigger=none
+              dtparam=pwr_led_activelow=off
+            marker: "# {mark} Disable power LED"
+            insertafter: '[all]'
+            state: "{{ state[disable_led_power] | default('absent') }}"
+          become: yes
+          notify: reboot is required
+      when: os_ver|int <= 10
 
     - name: disable wi-fi
       lineinfile:
@@ -40,34 +125,6 @@
         line: "dtoverlay=disable-bt"
         insertafter: '[all]'
         state: "{{ state[disable_bluetooth] | default('absent') }}"
-      become: yes
-      notify: reboot is required
-
-    - name: disable act led
-      blockinfile:
-        path: /boot/config.txt
-        block: |
-          dtparam=act_led_trigger=none
-          {% if "Pi 3" in model or "Pi 4" in model %}
-          dtoverlay=act-led activelow=off
-          {% else %}
-          dtparam=act_led_activelow=off
-          {% endif %}
-        marker: "# {mark} Disable act LED"
-        insertafter: '[all]'
-        state: "{{ state[disable_led_act] | default('absent') }}"
-      become: yes
-      notify: reboot is required
-
-    - name: disable power led
-      blockinfile:
-        path: /boot/config.txt
-        block: |
-          dtparam=pwr_led_trigger=none
-          dtparam=pwr_led_activelow=off
-        marker: "# {mark} Disable power LED"
-        insertafter: '[all]'
-        state: "{{ state[disable_led_power] | default('absent') }}"
       become: yes
       notify: reboot is required
 
@@ -108,7 +165,13 @@
       when: "'Model B' in model"
 
   handlers:
-    - name: switch HDMI service now
+    - name: switch HDMI by xrandr now
+      command: xrandr --output HDMI-1 --{{ ['auto', 'off'][disable_hdmi] }}
+      environment:
+        DISPLAY: ':0'
+      when: os_ver|int >= 11
+    - name: switch HDMI by tvservice now
       command: /usr/bin/tvservice {{ ['-p', '-o'][disable_hdmi] }}
+      when: os_ver|int <= 10
     - name: reboot is required
       debug: msg="Reboot is required."
