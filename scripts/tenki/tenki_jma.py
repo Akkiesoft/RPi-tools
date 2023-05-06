@@ -1,14 +1,15 @@
 #!/usr/bin/env python3
 # coding: utf-8
 
+import os
 from datetime import datetime, timezone, timedelta
 import urllib.request
 import json
 from PIL import Image
 import inkyphat
 
-path = '/home/pi/tenki/'
-fontpath = '/usr/share/fonts/truetype/'
+path = os.path.dirname(__file__)
+fontpath = '/usr/share/fonts/truetype'
 
 # Kanagawa
 area_code = "140000"
@@ -37,7 +38,7 @@ else:
   day = 0
 
 # APIから天気情報をもらってくる
-url = "https://www.jma.go.jp/bosai/forecast/data/forecast/" + area_code + ".json"
+url = "https://www.jma.go.jp/bosai/forecast/data/forecast/%s.json" % area_code
 #print(url)
 req = urllib.request.Request(url)
 with urllib.request.urlopen(req) as res:
@@ -76,25 +77,25 @@ for i in json:
 # Comment out only V1
 inkyphat.set_colour('red') 
 inkyphat.set_border(inkyphat.BLACK)
-inkyphat.set_image(Image.open(path + "tenki-base.png"))
-status_img = Image.open(path + status + ".png")
+inkyphat.set_image(Image.open(os.path.join(path, "tenki-base.png")))
+status_img = Image.open(os.path.join(path, "%s.png" % status))
 inkyphat.paste(status_img, box=(0, 26))
 
-font = inkyphat.ImageFont.truetype(fontpath + "x14y24pxHeadUpDaisy.ttf", 24)
+font = inkyphat.ImageFont.truetype(os.path.join(fontpath, "x14y24pxHeadUpDaisy.ttf"), 24)
 inkyphat.text((4, -3), title, 2, font=font)
 inkyphat.text((3, -4), title, 0, font=font)
 inkyphat.text((10, 75), temp_max, 2, font=font)
 inkyphat.text((10, 75), "   /" + temp_min, 0, font=font)
 
-font2 = inkyphat.ImageFont.truetype(fontpath + "vlgothic/VL-Gothic-Regular.ttf", 12)
+font2 = inkyphat.ImageFont.truetype(os.path.join(fontpath, "vlgothic/VL-Gothic-Regular.ttf"), 12)
 inkyphat.text((105, -3), data_from, 0, font=font2)
 
-font3 = inkyphat.ImageFont.truetype(fontpath + "x8y12pxTheStrongGamer.ttf", 12)
+font3 = inkyphat.ImageFont.truetype(os.path.join(fontpath, "x8y12pxTheStrongGamer.ttf"), 12)
 inkyphat.text((105, 8), forcast_date_str, 0, font=font3)
 
 inkyphat.show()
 
-with open(path + 'tenki.txt', 'w') as f:
+with open(os.path.join(path, 'tenki.txt'), 'w') as f:
   print(status, file=f)
   print(temp_max, file=f)
   print(temp_min, file=f)
