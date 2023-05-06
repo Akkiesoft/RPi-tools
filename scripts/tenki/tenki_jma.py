@@ -5,8 +5,8 @@ import os
 from datetime import datetime, timezone, timedelta
 import urllib.request
 import json
-from PIL import Image
-import inkyphat
+from PIL import Image, ImageDraw, ImageFont
+from inky import InkyPHAT
 
 path = os.path.dirname(__file__)
 fontpath = '/usr/share/fonts/truetype'
@@ -74,26 +74,27 @@ for i in json:
 #  Draw to Inky pHAT
 # -------------------------
 
-# Comment out only V1
-inkyphat.set_colour('red') 
-inkyphat.set_border(inkyphat.BLACK)
-inkyphat.set_image(Image.open(os.path.join(path, "tenki-base.png")))
+display = InkyPHAT('red')
+display.set_border(display.BLACK)
+img = Image.open(os.path.join(path, "tenki-base.png"))
 status_img = Image.open(os.path.join(path, "%s.png" % status))
-inkyphat.paste(status_img, box=(0, 26))
+img.paste(status_img, box=(0, 26))
+draw = ImageDraw.Draw(img)
 
-font = inkyphat.ImageFont.truetype(os.path.join(fontpath, "x14y24pxHeadUpDaisy.ttf"), 24)
-inkyphat.text((4, -3), title, 2, font=font)
-inkyphat.text((3, -4), title, 0, font=font)
-inkyphat.text((10, 75), temp_max, 2, font=font)
-inkyphat.text((10, 75), "   /%s" % temp_min, 0, font=font)
+font = ImageFont.truetype(os.path.join(fontpath, "x14y24pxHeadUpDaisy.ttf"), 24)
+draw.text((4, -3), title, 2, font=font)
+draw.text((3, -4), title, 0, font=font)
+draw.text((10, 75), temp_max, 2, font=font)
+draw.text((10, 75), "   /%s" % temp_min, 0, font=font)
 
-font2 = inkyphat.ImageFont.truetype(os.path.join(fontpath, "vlgothic/VL-Gothic-Regular.ttf"), 12)
-inkyphat.text((105, -3), data_from, 0, font=font2)
+font2 = ImageFont.truetype(os.path.join(fontpath, "vlgothic/VL-Gothic-Regular.ttf"), 12)
+draw.text((105, -3), data_from, 0, font=font2)
 
-font3 = inkyphat.ImageFont.truetype(os.path.join(fontpath, "x8y12pxTheStrongGamer.ttf"), 12)
-inkyphat.text((105, 8), forcast_date_str, 0, font=font3)
+font3 = ImageFont.truetype(os.path.join(fontpath, "x8y12pxTheStrongGamer.ttf"), 12)
+draw.text((105, 8), forcast_date_str, 0, font=font3)
 
-inkyphat.show()
+display.set_image(img)
+display.show()
 
 with open(os.path.join(path, 'tenki.txt'), 'w') as f:
   print(status, file=f)
