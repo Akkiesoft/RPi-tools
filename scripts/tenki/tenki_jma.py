@@ -56,7 +56,7 @@ for i in json:
       # 今日明日の天気が含まれる回。発表元と発表時刻はここで見ることにする
       if area['area']['code'] == area_sub_code:
         if "weatherCodes" in area:
-          data_from = i['publishingOffice'] + "発表"
+          data_from = "%s発表" % i['publishingOffice']
           data_published_at = i['reportDatetime']
           d = datetime.fromisoformat(data_published_at)
           forcast_date_str = d.strftime("%y/%m/%d %H:%I")
@@ -85,7 +85,7 @@ font = inkyphat.ImageFont.truetype(os.path.join(fontpath, "x14y24pxHeadUpDaisy.t
 inkyphat.text((4, -3), title, 2, font=font)
 inkyphat.text((3, -4), title, 0, font=font)
 inkyphat.text((10, 75), temp_max, 2, font=font)
-inkyphat.text((10, 75), "   /" + temp_min, 0, font=font)
+inkyphat.text((10, 75), "   /%s" % temp_min, 0, font=font)
 
 font2 = inkyphat.ImageFont.truetype(os.path.join(fontpath, "vlgothic/VL-Gothic-Regular.ttf"), 12)
 inkyphat.text((105, -3), data_from, 0, font=font2)
