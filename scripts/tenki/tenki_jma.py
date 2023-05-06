@@ -2,7 +2,7 @@
 # coding: utf-8
 
 import os
-from datetime import datetime, timezone, timedelta
+from time import localtime
 import urllib.request
 import json
 from PIL import Image, ImageDraw, ImageFont
@@ -29,8 +29,7 @@ weather_codes = {100: 0, 101: 0, 102: 2, 103: 2, 104: 3, 105: 3, 106: 2, 107: 2,
 statuses = ['sunny', 'cloudy', 'rain', 'snow']
 
 # 夜の回は明日の天気を出したい
-now = datetime.now()
-if (now.hour >= 20):
+if 20 <= localtime().tm_hour:
   title = "あしたのてんき"
   day = 1
 else:
@@ -57,9 +56,7 @@ for i in json:
       if area['area']['code'] == area_sub_code:
         if "weatherCodes" in area:
           data_from = "%s発表" % i['publishingOffice']
-          data_published_at = i['reportDatetime']
-          d = datetime.fromisoformat(data_published_at)
-          forcast_date_str = d.strftime("%y/%m/%d %H:%I")
+          forecast_date = i['reportDatetime'].replace('T', ' ').replace('-','/').split(':00+')[0]
           weather_code = weather_codes[int(area["weatherCodes"][day])]
           status = statuses[weather_code]
       # 今日明日の気温が含まれる回
@@ -91,7 +88,7 @@ font2 = ImageFont.truetype(os.path.join(fontpath, "vlgothic/VL-Gothic-Regular.tt
 draw.text((105, -3), data_from, 0, font=font2)
 
 font3 = ImageFont.truetype(os.path.join(fontpath, "x8y12pxTheStrongGamer.ttf"), 12)
-draw.text((105, 8), forcast_date_str, 0, font=font3)
+draw.text((105, 8), forecast_date, 0, font=font3)
 
 display.set_image(img)
 display.show()
