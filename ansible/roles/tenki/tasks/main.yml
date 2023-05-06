@@ -15,13 +15,13 @@
 
 - name: create directory for tenki
   file:
-    path: /home/pi/tenki
+    path: "/home/{{ ansible_user }}/tenki"
     state: directory
 
 - name: copy scripts
   copy:
     src: "tenki/{{ item }}"
-    dest: /home/pi/tenki
+    dest: "/home/{{ ansible_user }}/tenki"
   loop:
   - tenki.py
   - tenki-base.png
