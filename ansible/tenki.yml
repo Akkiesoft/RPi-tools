@@ -2,4 +2,5 @@
 - hosts: tenki
   gather_facts: no
   roles:
+  - enable-spi
   - tenki

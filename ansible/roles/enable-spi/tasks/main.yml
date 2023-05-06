@@ -1,0 +1,3 @@
+- name: enable spi
+  command: /usr/bin/raspi-config nonint do_spi 0
+  become: yes

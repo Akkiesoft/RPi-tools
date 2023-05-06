@@ -1,3 +1,17 @@
+- name: install packages
+  apt:
+    update_cache: yes
+    cache_valid_time: 7200
+    name:
+      - fonts-vlgothic
+      - python3-pip
+      - python3-pil
+  become: yes
+
+- name: install inky library
+  pip:
+    name: inky
+
 - name: ensure create directory
   file:
     path: /usr/share/fonts/truetype/
