@@ -1,7 +1,7 @@
 ---
 - hosts: plarail
   vars:
-    install_dir: "/home/{{ ansible_ssh_user }}/plarail"
+    install_dir: "/home/{{ ansible_user }}/plarail"
   gather_facts: no
   roles:
   - plarail
