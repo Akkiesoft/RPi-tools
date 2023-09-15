@@ -12,7 +12,6 @@
 
 import os
 import io
-import picamera
 import RPi.GPIO as GPIO
 import time
 import copy
@@ -32,6 +31,7 @@ pwm = pwm_fw
 
 B_MIN_SPEED = 12
 P_MIN_SPEED = 18
+USE_CAMERA = 1
 
 RUNDIR = os.path.dirname(os.path.abspath(__file__))
 
@@ -201,16 +201,21 @@ class StreamingServer(socketserver.ThreadingMixIn, server.HTTPServer):
     allow_reuse_address = True
     daemon_threads = True
 
-with picamera.PiCamera(resolution='320x240', framerate=24) as camera:
+
+if USE_CAMERA:
+    import picamera
+    camera = picamera.PiCamera(resolution='320x240', framerate=24)
     output = StreamingOutput()
     #Uncomment the next line to change your Pi's Camera rotation (in degrees)
     camera.rotation = 90
     #camera.rotation = 180
     camera.start_recording(output, format='mjpeg')
-    try:
-        address = ('', 8000)
-        server = StreamingServer(address, Handler)
-        server.serve_forever()
-    finally:
+
+try:
+    address = ('', 8000)
+    server = StreamingServer(address, Handler)
+    server.serve_forever()
+finally:
+    if USE_CAMERA:
         camera.stop_recording()
-        GPIO.cleanup()
+    GPIO.cleanup()
