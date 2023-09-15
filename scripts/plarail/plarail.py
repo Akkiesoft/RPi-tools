@@ -20,24 +20,10 @@ import threading
 from http import server
 import logging
 
-GPIO.setmode(GPIO.BCM)
-chan_list = [24,23]
-GPIO.setup(chan_list, GPIO.OUT)
-
-freq=220
-pwm_fw = GPIO.PWM(24, freq)
-pwm_bk = GPIO.PWM(23, freq)
-pwm = pwm_fw
-
 B_MIN_SPEED = 12
 P_MIN_SPEED = 18
 USE_CAMERA = 1
-
 RUNDIR = os.path.dirname(os.path.abspath(__file__))
-
-f = open(RUNDIR + "/mascon.html", 'r')
-html = f.read()
-f.close()
 
 class StreamingOutput(object):
     def __init__(self):
@@ -56,57 +42,39 @@ class StreamingOutput(object):
             self.buffer.seek(0)
         return self.buffer.write(buf)
 
-def brake(mycmd, duty):
-    global cmd, pwmstat, pwm
-    cmd = mycmd
-    time.sleep(0.1)
-    pwm.ChangeFrequency(1090)
-    while B_MIN_SPEED < pwmstat:
-        # print(pwmstat, duty)
-        if mycmd != cmd:
-            logging.info("[Plarail] command has been changed.")
-            break
-        pwmstat = pwmstat - duty
-        if pwmstat < B_MIN_SPEED:
-            break
-        pwm.ChangeDutyCycle(pwmstat)
-        time.sleep(0.2)
-    if pwmstat <= B_MIN_SPEED:
-        pwm.stop()
-        pwmstat = 0
-        logging.info("[Plarail] stopped.")
+class PlarailCommand():
+    def __init__(self, forward, backward, freq = 320):
+        self.cmd = 0
+        self.speed = 0
+        self.direction = 0
+        self.forward = forward
+        self.backward = backward
 
-def power(mycmd, duty):
-    global cmd, pwmstat, pwm
-    cmd = mycmd
-    time.sleep(0.15)
-    # print(pwmstat, duty)
-    if pwmstat == 0:
-        pwmstat = P_MIN_SPEED
-        pwm.start(pwmstat)
-        pwm.ChangeFrequency(320)
-    if pwmstat < duty:
-        # print("speedup.")
-        while pwmstat < duty:
-            if mycmd != cmd:
-                logging.info("[Plarail] command has been changed.")
-                break
-            pwmstat = pwmstat + 1
-            pwm.ChangeDutyCycle(pwmstat)
-            changePowerFreq(pwm, pwmstat)
-            # print(pwmstat)
-            time.sleep(0.1)
-    else:
-        # print("slowdown.")
-        while duty < pwmstat:
-            if mycmd != cmd:
-                logging.info("[Plarail] command has been changed.")
-                break
-            pwmstat = pwmstat - 1
-            pwm.ChangeDutyCycle(pwmstat)
-            changePowerFreq(pwm, pwmstat)
-            # print(pwmstat)
-            time.sleep(0.1)
+        GPIO.setmode(GPIO.BCM)
+        GPIO.setup((self.forward, self.backward), GPIO.OUT)
+        self.pwm_forward  = GPIO.PWM(self.forward, freq)
+        self.pwm_backward = GPIO.PWM(self.backward, freq)
+        self.pwm = self.pwm_forward
+
+    def set_direction(self, direction):
+        self.set_cmd("/EB")
+        time.sleep(0.2)
+        self.pwm.stop()
+        self.set_speed(0)
+        self.pwm = self.pwm_backward if direction else self.pwm_forward
+
+    def set_cmd(self, cmd):
+        self.cmd = cmd
+
+    def set_speed(self, speed):
+        #print(speed)
+        self.speed = speed
+        if self.speed:
+            self.pwm.ChangeDutyCycle(plarail.speed)
+            changePowerFreq(self.pwm, self.speed)
+        else:
+            self.pwm.stop()
+            self.pwm.ChangeFrequency(320)
 
 def changePowerFreq(pwm, s):
     if 25 < s and s < 33:
@@ -119,29 +87,67 @@ def changePowerFreq(pwm, s):
         # if s < 26 or 50 < s:
         pwm.ChangeFrequency(320)
 
-# global
-cmd = ""
-pwmstat = 0
+def brake(cmd, duty):
+    if plarail.cmd == cmd:
+        return
+    if plarail.speed == 0:
+        return
+    plarail.set_cmd(cmd)
+    time.sleep(0.2)
+    plarail.pwm.ChangeFrequency(1090)
+    while B_MIN_SPEED < plarail.speed:
+        if cmd != plarail.cmd:
+            logging.info("[Plarail] command has been changed.")
+            break
+        plarail.set_speed(plarail.speed - duty)
+        if plarail.speed < B_MIN_SPEED:
+            break
+        time.sleep(0.2)
+    if plarail.speed <= B_MIN_SPEED:
+        plarail.set_speed(0)
+        logging.info("[Plarail] stopped.")
+
+def power(cmd, duty):
+    if plarail.cmd == cmd:
+        return
+    plarail.set_cmd(cmd)
+    time.sleep(0.2)
+    if plarail.speed == 0:
+        #print("zero start")
+        plarail.set_speed(P_MIN_SPEED)
+        plarail.pwm.start(plarail.speed)
+    if plarail.speed < duty:
+        #print("speedup.")
+        while plarail.speed < duty:
+            if cmd != plarail.cmd:
+              logging.info("[Plarail] command has been changed.")
+              break
+            plarail.set_speed(plarail.speed + 1)
+            time.sleep(0.1)
+    else:
+        #print("slowdown.")
+        while duty < plarail.speed:
+            if cmd != plarail.cmd:
+              logging.info("[Plarail] command has been changed.")
+              break
+            plarail.set_speed(plarail.speed - 1)
+            time.sleep(0.1)
 
 class Handler(server.BaseHTTPRequestHandler):
     def do_GET(self):
-        global pwm, pwmstat, html
         logging.info("[Plarail] access: " + self.path)
         code = 200
         body = b"ok"
         if self.path == "/":
             body = bytes(html, 'UTF-8')
         elif self.path == "/FW":
-            pwm.stop()
-            pwmstat = 0
-            pwm = pwm_fw
+            plarail.set_direction(0)
         elif self.path == "/BK":
-            pwm.stop()
-            pwmstat = 0
-            pwm = pwm_bk
+            plarail.set_direction(1)
         elif self.path == "/EB":
-            pwm.stop()
-            pwmstat = 0
+            plarail.set_cmd(self.path)
+            time.sleep(0.2)
+            plarail.set_speed(0)
         elif self.path == "/B4":
             t = threading.Thread(target=brake, args=([self.path, 4]))
             t.start()
@@ -201,6 +207,12 @@ class StreamingServer(socketserver.ThreadingMixIn, server.HTTPServer):
     allow_reuse_address = True
     daemon_threads = True
 
+
+with open(RUNDIR + "/mascon.html", 'r') as f:
+    html = f.read()
+
+plarail = PlarailCommand(forward=24, backward=23)
+position = 5
 
 if USE_CAMERA:
     import picamera
