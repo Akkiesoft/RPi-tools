@@ -10,6 +10,10 @@
     vim_ver: vim82
   when: ansible_distribution_release == "bullseye"
 
+- set_fact: 
+    vim_ver: vim90
+  when: ansible_distribution_release == "bookworm"
+
 - name: install vim
   apt:
     update_cache: yes
