@@ -11,9 +11,6 @@ from picamera2 import Picamera2
 from picamera2.previews.qt import QGlPicamera2
 import time
 
-# path for store pictures
-basepath = '/home/akkie/captures'
-
 picam2 = Picamera2()
 picam2.configure(picam2.create_preview_configuration(main={"size": (480, 480)}))
 app = QApplication([])
@@ -35,7 +32,7 @@ def take_picture():
         capturing = True
         cfg = picam2.create_still_configuration(main={"size": (1024, 768)})
         now = time.strftime('%Y%m%d-%H%M%S', time.localtime())
-        path = "%s/%s.jpg" % (basepath, now)
+        path = "/var/www/html/camera/%s.jpg" % now
         picam2.switch_mode_and_capture_file(cfg, path, signal_function=qpicamera2.signal_done)
 
 def capture_done(job):

@@ -1,0 +1,14 @@
+- name: restart nginx
+  systemd:
+    name: nginx
+    state: restarted
+  become: yes
+
+- name: restart lightdm
+  systemd:
+    name: lightdm
+    state: restarted
+  become: yes
+
+- name: reboot
+  reboot:

@@ -1,0 +1,73 @@
+- name: install packages
+  apt:
+    name:
+      - python3
+      - python3-picamera2
+      - nginx
+      - libnginx-mod-http-fancyindex
+    state: present
+  become: yes
+
+- name: create directory for storing the pictures
+  file:
+    path: "/var/www/html/camera"
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
+    mode: 0755
+    state: directory
+
+- name: copy nginx config file
+  copy:
+    src: "default"
+    dest: "/etc/nginx/sites-available/default"
+    owner: "root"
+    group: "root"
+    mode: 0644
+  notify: restart nginx
+
+- name: copy script
+  copy:
+    src: "camera-for-hyperpixel2r.py"
+    dest: "/home/{{ ansible_user }}/camera-for-hyperpixel2r.py"
+    mode: 0755
+  notify: restart lightdm
+
+- name: create directory for autostart script
+  file:
+    path: "/home/{{ ansible_user }}/.config/lxsession/LXDE-pi"
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
+    mode: 0755
+    state: directory
+
+- name: copy autostart file
+  template:
+    src: autostart
+    dest: "/home/{{ ansible_user }}/.config/lxsession/LXDE-pi/autostart"
+  notify: restart lightdm
+
+- name: enable nginx.service
+  systemd:
+    name: "nginx.service"
+    enabled: yes
+  become: yes
+
+- name: disable display blanking
+  command: raspi-config nonint do_blanking 1
+  become: yes
+  changed_when: no
+
+- name: hide mouse cursour
+  lineinfile:
+    path: /etc/lightdm/lightdm.conf
+    line: "xserver-command=X -nocursor"
+    insertbefore: '[Seat:*]'
+  become: yes
+  notify: restart lightdm
+
+- name: add devicetree configuration for hyperpixel 2r
+  lineinfile:
+    path: "/boot/config.txt"
+    line: "dtoverlay=vc4-kms-dpi-hyperpixel2r"
+  become: yes
+  notify: reboot
