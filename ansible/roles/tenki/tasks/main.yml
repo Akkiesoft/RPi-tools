@@ -11,6 +11,8 @@
 - name: install inky library
   pip:
     name: inky
+    virtualenv: "{{ venv_dir }}"
+    virtualenv_command: "{{ ansible_python_interpreter }} -m venv --system-site-packages {{ venv_dir }}"
 
 - name: ensure create directory
   file:
