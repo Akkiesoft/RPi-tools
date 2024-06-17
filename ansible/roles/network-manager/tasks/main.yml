@@ -1,41 +1,43 @@
-- name: install NetworkManager
-  apt:
-    name: network-manager
-    state: present
-    update_cache: yes
-    cache_valid_time: 3600
-  become: yes
+- block:
+    - name: install NetworkManager
+      apt:
+        name: network-manager
+        state: present
+        update_cache: yes
+        cache_valid_time: 3600
+      become: yes
 
-- name: uninstall oldtype network management tool
-  apt:
-    name:
-    - dhcpcd5
-    - ifplugd
-    state: absent
-  become: yes
+    - name: uninstall oldtype network management tool
+      apt:
+        name:
+        - dhcpcd5
+        - ifplugd
+        state: absent
+      become: yes
 
-- name: clear network config fies
-  copy:
-    src: "{{ item.src }}"
-    dest: "{{ item.dest }}"
-    backup: yes
-  with_items:
-  - src: interfaces
-    dest: /etc/network/interfaces
-  - src: wpa_supplicant.conf
-    dest: /etc/wpa_supplicant/wpa_supplicant.conf
-  become: yes
+    - name: clear network config fies
+      copy:
+        src: "{{ item.src }}"
+        dest: "{{ item.dest }}"
+        backup: yes
+      with_items:
+      - src: interfaces
+        dest: /etc/network/interfaces
+      - src: wpa_supplicant.conf
+        dest: /etc/wpa_supplicant/wpa_supplicant.conf
+      become: yes
 
-- name: enable network-manager
-  systemd:
-    name: network-manager
-    enabled: yes
-  when: ansible_distribution_major_version|int <= 10
-  become: yes
+    - name: enable network-manager
+      systemd:
+        name: network-manager
+        enabled: yes
+      when: ansible_distribution_major_version|int <= 10
+      become: yes
 
-- name: enable NetworkManager
-  systemd:
-    name: NetworkManager
-    enabled: yes
-  when: ansible_distribution_major_version|int >= 11
-  become: yes
+    - name: enable NetworkManager
+      systemd:
+        name: NetworkManager
+        enabled: yes
+      when: ansible_distribution_major_version|int >= 11
+      become: yes
+  when: ansible_distribution_major_version|int <= 11
