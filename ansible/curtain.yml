@@ -7,21 +7,14 @@
   vars:
     - rungpio: |
         #!/bin/bash
-        gpio -g mode 17 out
-        gpio -g write 17 1
+        pinctrl set 23 op pn dh
         sleep 0.1
-        gpio -g write 17 0
+        pinctrl set 23 op pn dl
   tasks:
-    - name: install packages
-      apt:
-        name: wiringpi
-        state: present
-      become: true
-
     - name: copy rungpio.sh
       copy:
         content: "{{ rungpio }}"
-        dest: /home/pi/rungpio.sh
+        dest: "/home/{{ ansible_user }}/rungpio.sh"
         mode: 0755
 
     - name: set cron job
@@ -29,5 +22,5 @@
         name: morning
         hour: 6
         minute: 0
-        job: "/home/pi/rungpio.sh ; sleep 5 ; /home/pi/rungpio.sh"
+        job: "/home/{{ ansible_user }}/rungpio.sh ; sleep 5 ; /home/{{ ansible_user }}/rungpio.sh"
         state: present
