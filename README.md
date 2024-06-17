@@ -4,25 +4,23 @@
 
 ## Ansible playbook
 
-Raspberry Piの各種環境構築に役立つかもしれないPlaybookをまとめたものである。Ansible バージョン2系で動作するとおもう。
+Raspberry Piの各種環境構築に役立つかもしれないPlaybookをまとめたものである。それなりに新しいAnsibleでも動作するとおもう。
 
 ### Role 一覧
 
-| role名 | 内容 | 依存するRole | varsの有無 |
-| --- | --- | --- | --- |
-| bme280tozabbix | bme280の値をZabbixに送りつける | なし | あり |
-| japan-weather | 日本全国の天気をOpenWeatherMapで拾いSenseHATかUnicorn HATに表示 | なし | あり |
-| l-05a | NetworkManagerでL-05Aを使用してモバイル接続する | network-manager | あり |
-| fuckinhotmon | DS18B20もしくはZabbixから取得する室温をNokia5110LCDで表示する環境を構築する | なし | あり |
-| lcd-icreader | SB1602系などのI2C通信のLCDモジュールを使ってRC-S320でICカードの残高を表示する環境を構築する | なし | なし |
-| mikutter | mikutterをインストールする | なし | なし |
-| mt7650u | GW-450Dなどmt7650uチップのWi-Fiドライバをインストールする（ドライバーバイナリは別途用意が必要） | なし | なし |
-| network-manager | NetworkManagerを導入する | なし | なし | 
-| profile-print | TOSHIBA TEC B-EP2DLプリンターで名札プリンターを作る | なし | なし |
-| rpi-source | ドライバーやカーネルコンパイル用の環境を構築する | なし | なし |
-| rtl8192cu | rtl8192cuドライバーの省電力オプションを無効化する | なし | なし |
-| timelapse-camera | タイムラプスカメラ環境を作る | なし | なし |
-| wifi | NetworkManager用のWi-Fi設定ファイルを投入する | network-manager | あり |
+| role名 | 内容 | 依存するRole | varsの有無 | RPi OS動作確認状況 |
+| --- | --- | --- | --- | --- |
+| bme280tozabbix | bme280の値をZabbixに送りつける | なし | あり | Bookworm |
+| japan-weather | 日本全国の天気をOpenWeatherMapで拾いSenseHATかUnicorn HATに表示 | なし | あり |  |
+| l-05a | NetworkManagerでL-05Aを使用してモバイル接続する | network-manager | あり |  |
+| fuckinhotmon | DS18B20もしくはZabbixから取得する室温をNokia5110LCDで表示する環境を構築する | なし | あり |  |
+| lcd-icreader | SB1602系などのI2C通信のLCDモジュールを使ってRC-S320でICカードの残高を表示する環境を構築する | なし | なし | Bullseye |
+| network-manager | NetworkManagerを導入する | なし | なし | Bookworm |
+| profile-print | TOSHIBA TEC B-EP2DLプリンターで名札プリンターを作る | なし | なし | |
+| rounded-camera | Pimoroni HyperPixel 2.1 Roundを使用したデジカメアプリ環境を構築 | なし | なし | Bookworm |
+| tenki | 電子ペーパーを使用した天気予報アプリ環境をインストールする | なし | なし | Bookworm |
+| timelapse-camera | タイムラプスカメラ環境を作る | なし | なし |  |
+| wifi | NetworkManager用のWi-Fi設定ファイルを投入する | network-manager | あり | Bookworm |
 
 ### vars
 
@@ -92,6 +90,7 @@ remote_count_path: /var/www/html/count.dat (カウントファイルのSCPアッ
 #### bme280tozabbix role用のvars
 
 ```
+venv_dir: /home/{{ ansible_user }}/venv
 zabbix_hostname: 192.168.0.100
 ```
 
@@ -107,22 +106,12 @@ your_api_key: abcdefg1234567
 
 ```
 [all]
-raspi1 ANSIBLE_SSH_USER=pi
-raspi2 ANSIBLE_SSH_USER=pi
-raspi3 ANSIBLE_SSH_USER=pi
-```
+raspi1
+raspi2
+raspi3
 
-### Roleの組み合わせ
-
-Roleは自由に組み合わせて使用できる。依存するRoleに注意したうえで、Role一覧から選択をしていく。以下はmikutter環境を構築しつつ、Wi-Fiを設定するための組み合わせ。
-
-mikutter.yml
-```
----
-- hosts: all
-  roles:
-  - mikutter
-  - wifi
+[all:vars]
+ansible_user=pi
 ```
 
 ### 実行
@@ -130,5 +119,5 @@ mikutter.yml
 実行例を以下に示す。
 
 ```
-mypc:ansible user$ ansible-playbook -i hosts -l raspi1 mikutter.yml 
+mypc:ansible user$ ansible-playbook -i inventory/example -l raspi1.local vim.yml wifi-confonly.yml -DC
 ```
