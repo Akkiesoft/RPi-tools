@@ -1,5 +1,0 @@
-install_path: "{{ ansible_env.HOME }}"
-mikutter_path: "{{ install_path }}/mikutter"
-
-# 3.2.10生まれ--version育ち古いやつはだいたい3.2.9
-exist_mikutter_ver: ["mikutter", "3.2.9"]

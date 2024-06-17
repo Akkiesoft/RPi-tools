@@ -1,4 +1,0 @@
-# Require roles: jessie, ruby2.1
-
-- include: check.yml
-- include: install.yml
