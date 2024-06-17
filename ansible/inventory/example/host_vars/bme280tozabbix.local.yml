@@ -1,0 +1,2 @@
+venv_dir: /home/pi/venv
+zabbix_hostname: bme280tozabbix

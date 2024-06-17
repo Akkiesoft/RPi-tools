@@ -2,8 +2,7 @@
   apt:
     name:
     - i2c-tools
-    - python3-pip
-    - python3-smbus
+    - python3-smbus2
     - zabbix-agent
     state: present
   become: yes
@@ -13,23 +12,29 @@
     name:
     - py-zabbix
     - RPi.bme280
+    virtualenv: "{{ venv_dir }}"
+    virtualenv_command: "{{ ansible_python_interpreter }} -m venv --system-site-packages {{ venv_dir }}"
     state: present
   become: true
 
 - name: copy script
   template:
     src: bme280tozabbix.py
-    dest: /home/pi/
+    dest: "/home/{{ ansible_user }}/"
     mode: 0755
+
+- name: copy systemd service
+  template:
+    src: "bme280tozabbix.service"
+    dest: /etc/systemd/system/
+    mode: 0644
+  become: yes
 
 - name: copy systemd timer
   copy:
-    src: bme280tozabbix.{{ item }}
+    src: "bme280tozabbix.timer"
     dest: /etc/systemd/system/
     mode: 0644
-  with_items:
-  - service
-  - timer
   become: yes
 
 - name: enable bme280tozabbix.timer and service
@@ -38,7 +43,7 @@
     state: started
     enabled: yes
     daemon_reload: yes
-  with_items:
+  loop:
   - service
   - timer
   become: yes

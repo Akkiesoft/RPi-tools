@@ -17,8 +17,8 @@ data = bme280.sample(bus, address)
 #print(data.pressure)
 
 params = [
-  ZabbixMetric("{{ zabbix_hostname }}", "verandah_temperature", data.temperature),
-  ZabbixMetric("{{ zabbix_hostname }}", "verandah_humidity", data.humidity),
-  ZabbixMetric("{{ zabbix_hostname }}", "verandah_pressure", data.pressure)
+  ZabbixMetric("{{ zabbix_hostname }}", "verandah_temperature", round(data.temperature, 2)),
+  ZabbixMetric("{{ zabbix_hostname }}", "verandah_humidity", round(data.humidity, 2)),
+  ZabbixMetric("{{ zabbix_hostname }}", "verandah_pressure", round(data.pressure, 2))
 ]
 result = ZabbixSender(use_config=True).send(params)
