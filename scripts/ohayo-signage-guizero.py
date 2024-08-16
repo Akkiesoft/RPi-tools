@@ -3,13 +3,12 @@ import io
 import urllib.request
 from PIL import Image
 import time
-from zabbix.api import ZabbixAPI
+from zabbix_utils import ZabbixAPI
 import json
 
 zbx = {
   'url': '',
-  'user': '',
-  'pass': ''
+  'token': ''
 }
 ohayo_list_url = 'https://kokuda.org/portal/json/ohayo.php'
 ohayo_url = ""
@@ -41,7 +40,7 @@ def hide_show_textbox():
     textbox.visible = not textbox.visible
 
 try:
-  z = ZabbixAPI(url=zbx['url'], user=zbx['user'], password=zbx['pass'])
+  z = ZabbixAPI(**zbx)
 except:
   print('error.')
   sys.exit(1)

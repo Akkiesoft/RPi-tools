@@ -10,7 +10,7 @@
 - name: install pip packages
   pip:
     name:
-    - py-zabbix
+    - zabbix_utils
     - RPi.bme280
     virtualenv: "{{ venv_dir }}"
     virtualenv_command: "{{ ansible_python_interpreter }} -m venv --system-site-packages {{ venv_dir }}"

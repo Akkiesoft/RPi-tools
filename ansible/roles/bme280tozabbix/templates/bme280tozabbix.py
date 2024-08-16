@@ -5,7 +5,7 @@
 
 import smbus2
 import bme280
-from pyzabbix import ZabbixMetric, ZabbixSender
+from zabbix_utils import ItemValue, Sender
 
 address = 0x76
 bus = smbus2.SMBus(1)
@@ -17,8 +17,8 @@ data = bme280.sample(bus, address)
 #print(data.pressure)
 
 params = [
-  ZabbixMetric("{{ zabbix_hostname }}", "verandah_temperature", round(data.temperature, 2)),
-  ZabbixMetric("{{ zabbix_hostname }}", "verandah_humidity", round(data.humidity, 2)),
-  ZabbixMetric("{{ zabbix_hostname }}", "verandah_pressure", round(data.pressure, 2))
+  ItemValue("{{ zabbix_hostname }}", "verandah_temperature", round(data.temperature, 2)),
+  ItemValue("{{ zabbix_hostname }}", "verandah_humidity", round(data.humidity, 2)),
+  ItemValue("{{ zabbix_hostname }}", "verandah_pressure", round(data.pressure, 2))
 ]
-result = ZabbixSender(use_config=True).send(params)
+result = Sender(use_config=True).send(params)
