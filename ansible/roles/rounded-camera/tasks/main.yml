@@ -15,6 +15,7 @@
     group: "{{ ansible_user }}"
     mode: 0755
     state: directory
+  become: yes
 
 - name: copy nginx config file
   copy:
@@ -23,6 +24,7 @@
     owner: "root"
     group: "root"
     mode: 0644
+  become: yes
   notify: restart nginx
 
 - name: copy script
@@ -67,7 +69,7 @@
 
 - name: add devicetree configuration for hyperpixel 2r
   lineinfile:
-    path: "/boot/config.txt"
+    path: "/boot/firmware/config.txt"
     line: "dtoverlay=vc4-kms-dpi-hyperpixel2r"
   become: yes
   notify: reboot
