@@ -1,5 +1,0 @@
----
-- hosts: wifi
-  roles:
-  - network-manager
-  - wifi
