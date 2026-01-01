@@ -6,9 +6,7 @@
     owner: root
     group: root
   loop: "{{ wifi }}"
-  notify:
-    - restart network-manager
-    - restart NetworkManager
+  notify: restart NetworkManager
   become: yes
 
 - name: remove old wi-fi config
