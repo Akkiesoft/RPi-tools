@@ -10,17 +10,19 @@ Raspberry Piの各種環境構築に役立つかもしれないPlaybookをまと
 
 | role名 | 内容 | 依存するRole | varsの有無 | RPi OS動作確認状況 |
 | --- | --- | --- | --- | --- |
-| bme280tozabbix | bme280の値をZabbixに送りつける | なし | あり | Bookworm |
+| bme280tozabbix | bme280の値をZabbixに送りつける | なし | あり | Trixie |
+| curtain | 世界でうちだけ、このスクリプトでカーテンが開ける | なし | なし | Trixie |
 | japan-weather | 日本全国の天気をOpenWeatherMapで拾いSenseHATかUnicorn HATに表示 | なし | あり |  |
 | l-05a | NetworkManagerでL-05Aを使用してモバイル接続する | network-manager | あり |  |
 | fuckinhotmon | DS18B20もしくはZabbixから取得する室温をNokia5110LCDで表示する環境を構築する | なし | あり |  |
 | lcd-icreader | SB1602系などのI2C通信のLCDモジュールを使ってRC-S320でICカードの残高を表示する環境を構築する | なし | なし | Bullseye |
-| network-manager | NetworkManagerを導入する | なし | なし | Bookworm |
+| plarail | ラズピッピプラレール環境を作る | なし | なし | |
 | profile-print | TOSHIBA TEC B-EP2DLプリンターで名札プリンターを作る | なし | なし | |
 | rounded-camera | Pimoroni HyperPixel 2.1 Roundを使用したデジカメアプリ環境を構築 | なし | なし | Bookworm |
 | tenki | 電子ペーパーを使用した天気予報アプリ環境をインストールする | なし | なし | Bookworm |
 | timelapse-camera | タイムラプスカメラ環境を作る | なし | なし |  |
-| wifi | NetworkManager用のWi-Fi設定ファイルを投入する | network-manager | あり | Bookworm |
+| vim | vimを導入して、使いづらい標準設定をどうにかする | なし | あり | Trixie |
+| wifi | NetworkManager用のWi-Fi設定ファイルを投入する | なし | あり | Trixie |
 
 ### vars
 
