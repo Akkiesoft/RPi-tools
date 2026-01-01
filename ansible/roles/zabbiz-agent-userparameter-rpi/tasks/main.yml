@@ -1,0 +1,24 @@
+- name: ensure zabbix-agent is installed
+  apt:
+    update_cache: yes
+    cache_valid_time: 7200
+    name: zabbix-agent
+    state: present
+  become: yes
+
+- name: copy userparameter_rpi.conf
+  copy:
+    src: userparameter_rpi.conf
+    dest: /etc/zabbix/zabbix_agentd.conf.d/userparameter_rpi.conf
+    owner: root
+    group: root
+    mode: 0644
+    notify: restart zabbix-agent
+  become: yes
+
+- name: add zabbix user to video group
+  user:
+    append: yes
+    name: zabbix
+    groups: video
+  become: yes
