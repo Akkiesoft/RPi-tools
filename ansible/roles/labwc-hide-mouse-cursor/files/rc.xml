@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+<openbox_config xmlns="http://openbox.org/3.4/rc">
+    <touch deviceName="15-005d Goodix Capacitive TouchScreen" mapToOutput="DPI-1" mouseEmulation="yes"/>
+    <keyboard>
+        <keybind key="A-W-h">
+            <action name="HideCursor" />
+            <action name="WarpCursor" x="-1" y="-1" />
+        </keybind>
+    </keyboard>
+</openbox_config>

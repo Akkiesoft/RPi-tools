@@ -1,1 +1,2 @@
+wtype -M alt -M logo h -m alt -m logo &&
 /usr/bin/python3 /home/{{ ansible_user }}/camera-for-hyperpixel2r.py

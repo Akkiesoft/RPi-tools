@@ -1,0 +1,42 @@
+
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>HQCam</title>
+    <link href="static/bootstrap.min.css" rel="stylesheet">
+    <script src="static/bootstrap.bundle.min.js"></script>
+<style>
+#title { color: #2e688e; font-family: cursive; }
+h1 { font-family: serif; }
+</style>
+  </head>
+  <body>
+
+  <div class="px-0 px-md-3 col-12 col-md-10 col-lg-8 mx-auto">
+    <header class="d-flex flex-wrap justify-content-center py-3 mb-4 border-bottom">
+      <a href="/" class="d-flex align-items-center me-md-auto text-dark text-decoration-none">
+        <span class="me-2" width="40" height="32">📷</span>
+        <span class="fs-4" id="title">HQCam</span>
+      </a>
+    </header>
+
+    <main>
+      <div class="container mb-3">
+        <div class="row mx-auto mt-1 col-12 col-md-10 col-xl-8">
+          <img src="http://hqcam.local/camera/{{latest}}">
+        </div>
+        <div class="row mx-auto mt-1 col-12 col-md-10 col-xl-8">
+          <a href="camera/">もっとみる</a>
+        </div>
+      </div>
+    </main>
+
+    <footer class="pt-4 px-3 px-md-0 my-5 text-muted border-top">
+      2024 <a href="https://social.mikutter.hachune.net/@akkiesoft" target="_blank">@Akkiesoft</a>
+    </footer>
+
+  </div>
+  </body>
+</html>

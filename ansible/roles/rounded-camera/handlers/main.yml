@@ -1,11 +1,24 @@
+- name: enable web script service
+  systemd_service:
+    name: hqcam-web.service
+    enabled: yes
+    daemon_reload: yes
+  become: yes
+
+- name: restart web script service
+  systemd_service:
+    name: hqcam-web.service
+    state: restarted
+  become: yes
+
 - name: restart nginx
-  systemd:
+  systemd_service:
     name: nginx
     state: restarted
   become: yes
 
 - name: restart lightdm
-  systemd:
+  systemd_service:
     name: lightdm
     state: restarted
   become: yes

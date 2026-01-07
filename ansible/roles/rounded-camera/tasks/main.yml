@@ -3,9 +3,12 @@
     name:
       - python3
       - python3-picamera2
+      - python3-flask
       - nginx
       - libnginx-mod-http-fancyindex
     state: present
+    update_cache: yes
+    cache_valid_time: 7200
   become: yes
 
 - name: create directory for storing the pictures
@@ -27,6 +30,27 @@
   become: yes
   notify: restart nginx
 
+- name: enable nginx.service
+  systemd_service:
+    name: "nginx.service"
+    enabled: yes
+  become: yes
+
+- name: copy web script
+  copy:
+    src: "hqcam-web"
+    dest: "/home/{{ ansible_user }}"
+    mode: 0755
+  notify: restart web script service
+
+- name: copy service file of web script
+  copy:
+    src: "hqcam-web/hqcam-web.service"
+    dest: "/etc/systemd/system/hqcam-web.service"
+    mode: 0644
+  become: yes
+  notify: enable web script service
+
 - name: copy script
   copy:
     src: "camera-for-hyperpixel2r.py"
@@ -36,7 +60,7 @@
 
 - name: create directory for autostart script
   file:
-    path: "/home/{{ ansible_user }}/.config/lxsession/LXDE-pi"
+    path: "/home/{{ ansible_user }}/.config/labwc"
     owner: "{{ ansible_user }}"
     group: "{{ ansible_user }}"
     mode: 0755
@@ -45,26 +69,13 @@
 - name: copy autostart file
   template:
     src: autostart
-    dest: "/home/{{ ansible_user }}/.config/lxsession/LXDE-pi/autostart"
+    dest: "/home/{{ ansible_user }}/.config/labwc/autostart"
   notify: restart lightdm
-
-- name: enable nginx.service
-  systemd:
-    name: "nginx.service"
-    enabled: yes
-  become: yes
 
 - name: disable display blanking
   command: raspi-config nonint do_blanking 1
   become: yes
   changed_when: no
-
-- name: hide mouse cursour
-  lineinfile:
-    path: /etc/lightdm/lightdm.conf
-    line: "xserver-command=X -nocursor"
-    insertbefore: '[Seat:*]'
-  become: yes
   notify: restart lightdm
 
 - name: add devicetree configuration for hyperpixel 2r

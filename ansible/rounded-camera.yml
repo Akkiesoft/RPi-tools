@@ -1,5 +1,6 @@
 - name: Rounded Camera
-  hosts: rounded-camera
+  hosts: rounded_camera
   gather_facts: no
   roles:
-  - rounded-camera
+    - labwc-hide-mouse-cursor
+    - rounded-camera

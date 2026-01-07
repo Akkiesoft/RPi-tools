@@ -1,0 +1,13 @@
+[Unit]
+Description = HQCam web server
+Requires=network-online.target
+Wants=network-online.target
+After=network-online.target
+
+[Service]
+ExecStart = /usr/bin/python3 /home/akkie/hqcam-web/hqcam-web.py
+Restart = always
+Type = simple
+
+[Install]
+WantedBy = multi-user.target

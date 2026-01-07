@@ -1,0 +1,31 @@
+- name: install wtype
+  apt:
+    name:
+      - wtype
+    state: present
+    update_cache: yes
+    cache_valid_time: 7200
+  become: yes
+
+- name: create directory for autostart script
+  file:
+    path: "/home/{{ ansible_user }}/.config/labwc"
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
+    mode: 0755
+    state: directory
+
+- name: copy config file to hide mouse cursour
+  copy:
+    src: rc.xml
+    dest: "/home/{{ ansible_user }}/.config/labwc/rc.xml"
+  notify: restart lightdm
+
+- name: copy autostart file
+  copy:
+    src: autostart
+    dest: "/home/{{ ansible_user }}/.config/labwc/autostart"
+  when:
+    - copy_autostart_file is defined
+    - copy_autostart_file
+  notify: restart lightdm

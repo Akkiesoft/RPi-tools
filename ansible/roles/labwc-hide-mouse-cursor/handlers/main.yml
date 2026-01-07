@@ -1,0 +1,5 @@
+- name: restart lightdm
+  systemd_service:
+    name: lightdm
+    state: restarted
+  become: yes
