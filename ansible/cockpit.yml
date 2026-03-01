@@ -1,0 +1,41 @@
+- hosts: cockpit
+  tasks:
+    - name: install python3-debian
+      ansible.builtin.apt:
+        name: python3-debian
+        state: present
+        update_cache: yes
+        cache_valid_time: 3600
+      become: yes
+
+    - name: enable backports repository
+      ansible.builtin.deb822_repository:
+        name: backports
+        types: deb
+        uris: "http://deb.debian.org/debian"
+        suites: "{{ ansible_distribution_release }}-backports"
+        components: [ "main" ]
+        state: present
+      become: yes
+
+    - name: update cache
+      ansible.builtin.apt:
+        update_cache: yes
+
+    - name: install cockpit
+      ansible.builtin.apt:
+        name:
+          - cockpit
+          - cockpit-files
+        default_release: "{{ ansible_distribution_release }}-backports"
+        state: present
+      become: yes
+
+    - name: install other cockpit plugins
+      ansible.builtin.apt:
+        name: "cockpit-{{ item }}"
+        default_release: "{{ ansible_distribution_release }}-backports"
+        state: present
+      loop: "{{ cockpit_additional_plugins }}"
+      when: cockpit_additional_plugins is defined and cockpit_additional_plugins
+      become: yes
