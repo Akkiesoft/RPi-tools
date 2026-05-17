@@ -1,0 +1,3 @@
+pillow==12.2.0
+inky==2.4.0
+mojimoji==0.0.13
