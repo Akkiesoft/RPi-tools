@@ -22,11 +22,11 @@
 
 - name: install fonts
   get_url:
-    url: "{{ item }}"
-    dest: /usr/share/fonts/truetype/
+    url: "https://hicchicc.github.io/00ff/{{ item }}"
+    dest: "/usr/share/fonts/truetype/{{ item }}"
   loop:
-  - http://www17.plala.or.jp/xxxxxxx/00ff/x14y24pxHeadUpDaisy.ttf
-  - http://www17.plala.or.jp/xxxxxxx/00ff/x8y12pxTheStrongGamer.ttf
+    - x8y12pxTheStrongGamer.ttf
+    - x14y24pxHeadUpDaisy.ttf
   become: yes
 
 - name: create directory for tenki
