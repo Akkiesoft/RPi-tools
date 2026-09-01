@@ -17,10 +17,13 @@
         components: [ "main" ]
         state: present
       become: yes
+      register: r
 
     - name: update cache
       ansible.builtin.apt:
         update_cache: yes
+      when: r is changed
+      become: yes
 
     - name: install cockpit
       ansible.builtin.apt:
