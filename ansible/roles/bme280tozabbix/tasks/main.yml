@@ -3,6 +3,7 @@
     name:
     - i2c-tools
     - python3-smbus2
+    - python3-packaging
     - zabbix-agent
     state: present
   become: yes
